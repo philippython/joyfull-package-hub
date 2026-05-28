@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+
 import { SiteLayout } from "@/components/site-layout";
 
 export const Route = createFileRoute("/login")({
@@ -56,10 +56,6 @@ function Login() {
     }
   };
 
-  const google = async () => {
-    const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (res.error) toast.error("Google sign-in failed");
-  };
 
   const input = "w-full bg-white border border-burgundy/15 px-4 py-3 text-sm text-charcoal focus:outline-none focus:border-gold";
 
@@ -71,10 +67,7 @@ function Login() {
           <h1 className="font-serif text-3xl text-burgundy-deep text-center">
             {mode === "signin" ? "Sign in" : "Join Rewindd"}
           </h1>
-          <button onClick={google} className="mt-6 w-full border border-burgundy/20 py-3 text-sm hover:bg-cream transition">
-            Continue with Google
-          </button>
-          <div className="my-5 text-center text-[11px] text-warm-gray tracking-widest uppercase">or</div>
+          <div className="my-5" />
           <form onSubmit={submit} className="space-y-3">
             {mode === "signup" && <input required placeholder="Full name" value={name} onChange={(e) => setName(e.target.value)} className={input} />}
             <input required type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className={input} />
