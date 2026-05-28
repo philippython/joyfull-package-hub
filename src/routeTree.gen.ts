@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OurStoryRouteImport } from './routes/our-story'
 import { Route as OrderSuccessRouteImport } from './routes/order-success'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as KitRouteImport } from './routes/kit'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const OurStoryRoute = OurStoryRouteImport.update({
 const OrderSuccessRoute = OrderSuccessRouteImport.update({
   id: '/order-success',
   path: '/order-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KitRoute = KitRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/kit': typeof KitRoute
+  '/login': typeof LoginRoute
   '/order-success': typeof OrderSuccessRoute
   '/our-story': typeof OurStoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/kit': typeof KitRoute
+  '/login': typeof LoginRoute
   '/order-success': typeof OrderSuccessRoute
   '/our-story': typeof OurStoryRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/kit': typeof KitRoute
+  '/login': typeof LoginRoute
   '/order-success': typeof OrderSuccessRoute
   '/our-story': typeof OurStoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/kit' | '/order-success' | '/our-story'
+  fullPaths: '/' | '/kit' | '/login' | '/order-success' | '/our-story'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/kit' | '/order-success' | '/our-story'
-  id: '__root__' | '/' | '/kit' | '/order-success' | '/our-story'
+  to: '/' | '/kit' | '/login' | '/order-success' | '/our-story'
+  id: '__root__' | '/' | '/kit' | '/login' | '/order-success' | '/our-story'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   KitRoute: typeof KitRoute
+  LoginRoute: typeof LoginRoute
   OrderSuccessRoute: typeof OrderSuccessRoute
   OurStoryRoute: typeof OurStoryRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/order-success'
       fullPath: '/order-success'
       preLoaderRoute: typeof OrderSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kit': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   KitRoute: KitRoute,
+  LoginRoute: LoginRoute,
   OrderSuccessRoute: OrderSuccessRoute,
   OurStoryRoute: OurStoryRoute,
 }
