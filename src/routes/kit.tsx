@@ -85,7 +85,7 @@ function OrderForm({ productId, priceCents, currency }: { productId: string; pri
   const [qty, setQty] = useState(1);
   const [form, setForm] = useState({
     customerName: "", customerEmail: "", phone: "",
-    line1: "", line2: "", city: "", state: "", postal_code: "", country: "United States",
+    line1: "", line2: "", city: "", state: "", postal_code: "", country: "United Kingdom",
     notes: "",
   });
 
@@ -96,12 +96,6 @@ function OrderForm({ productId, priceCents, currency }: { productId: string; pri
     e.preventDefault();
     setSubmitting(true);
     try {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        toast.info("Please sign in to complete your order.");
-        navigate({ to: "/login", search: { redirect: "/kit" } });
-        return;
-      }
       const res = await place({
         data: {
           productId, quantity: qty,
