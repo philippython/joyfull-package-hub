@@ -55,7 +55,6 @@ const addressSchema = z.object({
 });
 
 export const placeOrder = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((raw) =>
     z.object({
       productId: z.string().uuid(),
@@ -67,7 +66,7 @@ export const placeOrder = createServerFn({ method: "POST" })
       notes: z.string().trim().max(500).optional().or(z.literal("")),
     }).parse(raw),
   )
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     const admin = adminClient();
     const { data: product, error: pErr } = await admin
       .from("products").select("price_cents, currency, is_active")
@@ -79,7 +78,6 @@ export const placeOrder = createServerFn({ method: "POST" })
     const { data: order, error } = await admin
       .from("orders")
       .insert({
-        user_id: context.userId,
         product_id: data.productId,
         customer_email: data.customerEmail,
         customer_name: data.customerName,
