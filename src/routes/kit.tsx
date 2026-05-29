@@ -1,13 +1,15 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { SiteLayout } from "@/components/site-layout";
 import { listProducts, placeOrder } from "@/lib/products.functions";
-import { supabase } from "@/integrations/supabase/client";
 import { formatCents } from "@/lib/format";
-import kitImg from "@/assets/kit-flatlay.jpg";
+import kitImg from "@/assets/photo-flatlay.webp";
+import openBox from "@/assets/photo-open-box.webp";
+import detail1 from "@/assets/photo-detail-1.avif";
+import detail4 from "@/assets/photo-detail-4.avif";
 
 export const Route = createFileRoute("/kit")({
   head: () => ({
@@ -32,8 +34,13 @@ function KitPage() {
     <SiteLayout>
       <section className="pt-32 pb-20 px-6 bg-cream">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-          <div>
-            <img src={kitImg} alt="The Rewindd kit" width={1400} height={1400} className="w-full aspect-square object-cover" />
+          <div className="space-y-3">
+            <img src={kitImg} alt="The Rewindd ritual kit, fully laid out" width={1400} height={1400} className="w-full aspect-square object-cover" />
+            <div className="grid grid-cols-3 gap-3">
+              <img src={openBox} alt="Open Rewindd box" className="w-full aspect-square object-cover" />
+              <img src={detail1} alt="Detail of the kit" className="w-full aspect-square object-cover" />
+              <img src={detail4} alt="Couple sharing the ritual" className="w-full aspect-square object-cover" />
+            </div>
           </div>
           <div className="md:pt-8">
             <div className="eyebrow">A Single Kit. Endlessly Reusable.</div>
@@ -72,12 +79,12 @@ function KitPage() {
 function OrderForm({ productId, priceCents, currency }: { productId: string; priceCents: number; currency: string }) {
   const navigate = useNavigate();
   const place = useServerFn(placeOrder);
-  const [authChecked, setAuthChecked] = useState(false);
+  
   const [submitting, setSubmitting] = useState(false);
   const [qty, setQty] = useState(1);
   const [form, setForm] = useState({
     customerName: "", customerEmail: "", phone: "",
-    line1: "", line2: "", city: "", state: "", postal_code: "", country: "United States",
+    line1: "", line2: "", city: "", state: "", postal_code: "", country: "United Kingdom",
     notes: "",
   });
 
@@ -88,12 +95,6 @@ function OrderForm({ productId, priceCents, currency }: { productId: string; pri
     e.preventDefault();
     setSubmitting(true);
     try {
-      const { data } = await supabase.auth.getSession();
-      if (!data.session) {
-        toast.info("Please sign in to complete your order.");
-        navigate({ to: "/login", search: { redirect: "/kit" } });
-        return;
-      }
       const res = await place({
         data: {
           productId, quantity: qty,
@@ -110,7 +111,7 @@ function OrderForm({ productId, priceCents, currency }: { productId: string; pri
       toast.error(err instanceof Error ? err.message : "Order failed");
     } finally {
       setSubmitting(false);
-      setAuthChecked(true);
+      
     }
   };
 
