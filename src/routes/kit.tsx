@@ -1,11 +1,10 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { SiteLayout } from "@/components/site-layout";
 import { listProducts, placeOrder } from "@/lib/products.functions";
-import { supabase } from "@/integrations/supabase/client";
 import { formatCents } from "@/lib/format";
 import kitImg from "@/assets/photo-flatlay.webp";
 import openBox from "@/assets/photo-open-box.webp";
