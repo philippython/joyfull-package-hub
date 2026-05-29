@@ -35,8 +35,13 @@ function KitPage() {
     <SiteLayout>
       <section className="pt-32 pb-20 px-6 bg-cream">
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16">
-          <div>
-            <img src={kitImg} alt="The Rewindd kit" width={1400} height={1400} className="w-full aspect-square object-cover" />
+          <div className="space-y-3">
+            <img src={kitImg} alt="The Rewindd ritual kit, fully laid out" width={1400} height={1400} className="w-full aspect-square object-cover" />
+            <div className="grid grid-cols-3 gap-3">
+              <img src={openBox} alt="Open Rewindd box" className="w-full aspect-square object-cover" />
+              <img src={detail1} alt="Detail of the kit" className="w-full aspect-square object-cover" />
+              <img src={detail4} alt="Couple sharing the ritual" className="w-full aspect-square object-cover" />
+            </div>
           </div>
           <div className="md:pt-8">
             <div className="eyebrow">A Single Kit. Endlessly Reusable.</div>
