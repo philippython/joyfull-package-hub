@@ -80,7 +80,7 @@ function KitPage() {
 function OrderForm({ productId, priceCents, currency }: { productId: string; priceCents: number; currency: string }) {
   const navigate = useNavigate();
   const place = useServerFn(placeOrder);
-  const [authChecked, setAuthChecked] = useState(false);
+  const [submitting2, _setSubmitting2] = useState(false); void submitting2; void _setSubmitting2;
   const [submitting, setSubmitting] = useState(false);
   const [qty, setQty] = useState(1);
   const [form, setForm] = useState({
