@@ -1,20 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export function SiteNav() {
   const [scrolled, setScrolled] = useState(false);
-  const [authed, setAuthed] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll);
-    supabase.auth.getSession().then(({ data }) => setAuthed(!!data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setAuthed(!!s));
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      sub.subscription.unsubscribe();
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -32,9 +25,7 @@ export function SiteNav() {
         <li><Link to="/" className="text-[11px] tracking-[0.18em] uppercase text-cream/75 hover:text-gold transition">Home</Link></li>
         <li><Link to="/kit" className="text-[11px] tracking-[0.18em] uppercase text-cream/75 hover:text-gold transition">The Kit</Link></li>
         <li><Link to="/our-story" className="text-[11px] tracking-[0.18em] uppercase text-cream/75 hover:text-gold transition">Our Story</Link></li>
-        {authed && (
-          <li><Link to="/admin" className="text-[11px] tracking-[0.18em] uppercase text-cream/75 hover:text-gold transition">Account</Link></li>
-        )}
+        <li><a href="/#policies" className="text-[11px] tracking-[0.18em] uppercase text-cream/75 hover:text-gold transition">Shipping & Returns</a></li>
         <li><Link to="/kit" className="btn-primary !py-2.5">Order Now</Link></li>
       </ul>
       <Link to="/kit" className="md:hidden btn-primary !py-2 !px-4 !text-[10px]">Order</Link>
@@ -61,16 +52,18 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Account</h4>
+          <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Policies</h4>
           <ul className="space-y-2 text-[13px]">
-            <li><Link to="/login" className="hover:text-gold transition">Sign in</Link></li>
-            <li><Link to="/admin" className="hover:text-gold transition">Orders & admin</Link></li>
+            <li><a href="/#policies" className="hover:text-gold transition">Shipping</a></li>
+            <li><a href="/#policies" className="hover:text-gold transition">Returns</a></li>
+            <li><a href="/#policies" className="hover:text-gold transition">Damaged items</a></li>
           </ul>
         </div>
         <div>
-          <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Stay close</h4>
+          <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Contact</h4>
           <p className="text-[13px] text-cream/55 leading-relaxed">
-            Hand-packed in small batches. Shipped with care, anywhere.
+            <a href="mailto:rewindd2026@gmail.com" className="hover:text-gold transition">rewindd2026@gmail.com</a><br/>
+            Hand-packed in small batches.<br/>Shipped with care, worldwide.
           </p>
         </div>
       </div>
