@@ -49,11 +49,17 @@ const steps = [
 ];
 
 const faqs = [
-  { q: "Who is this kit for?", a: "Couples who still love each other but want to be more intentional about spending quality time together. Long-term partners, newlyweds, parents — anyone who wants one quiet evening back." },
-  { q: "How long does the evening take?", a: "Most couples spend ninety minutes to two hours. There's no clock — move at the pace that feels right for you." },
-  { q: "Is it reusable?", a: "Yes. The cards, candle, oil and box are designed to be returned to. We recommend one ritual per month, or whenever life gets loud again." },
-  { q: "Do you ship outside the UK?", a: "Not yet. Rewindd is currently available for delivery within the United Kingdom only." },
-  { q: "Can I gift it?", a: "Absolutely. Every kit ships in premium gift-ready packaging, sealed and ready to hand over." },
+  { q: "Who is Rewindd for?", a: "Rewindd is for couples who still love each other but want to spend more intentional time together. It is ideal for busy couples, married couples, parents, newlyweds and couples who want a meaningful date night at home." },
+  { q: "Is this only for couples having problems?", a: "No. Rewindd is not therapy and it is not for fixing broken relationships. It is for couples who are okay, but feel like life has become busy and quality time has slipped away." },
+  { q: "What if my partner isn't good at deep conversations?", a: "That is exactly why the cards exist. The prompts guide the conversation, so neither of you has to force it or think of what to say." },
+  { q: "Will it feel awkward?", a: "No pressure. The guide and cards are designed to make the evening feel natural, relaxed and easy to follow." },
+  { q: "How long does the experience take?", a: "Most couples spend around 60–90 minutes with Rewindd, but there is no strict timing. You can go at your own pace." },
+  { q: "Is it a one-time experience?", a: "No. The cards and guide can be used again for future date nights. The candle and massage oil are consumable items." },
+  { q: "Can I buy it as a gift?", a: "Yes. Rewindd makes a thoughtful gift for anniversaries, weddings, birthdays, Valentine's Day, newlyweds or couples who deserve intentional time together." },
+  { q: "Can I return my kit?", a: "Yes. We accept returns within 14 days of delivery, provided the kit is returned in its original condition and the massage oil seal remains unopened. For hygiene reasons, kits with opened oil bottles cannot be returned." },
+  { q: "What if my order arrives damaged?", a: "Please email us within 48 hours of delivery with photos of the item and packaging, and we'll arrange a replacement as quickly as possible." },
+  { q: "How quickly will my order arrive?", a: "Orders are dispatched within 2–3 business days. Tracking details will be sent once your order is on its way." },
+  { q: "Do you ship outside the UK?", a: "At the moment, Rewindd is available for UK delivery only." },
 ];
 
 function Home() {
