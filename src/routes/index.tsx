@@ -11,46 +11,49 @@ import detail1 from "@/assets/photo-detail-1.avif";
 import detail2 from "@/assets/photo-detail-2.avif";
 import detail3 from "@/assets/photo-detail-3.avif";
 import detail4 from "@/assets/photo-detail-4.avif";
+import about1 from "@/assets/about-1.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Rewindd — Date Night Ritual Kit for Couples Who Still Love Each Other" },
-      { name: "description", content: "A premium reconnection ritual for busy couples. One quiet evening to come home to each other. £40 — shipped worldwide." },
-      { property: "og:title", content: "Rewindd — A Date Night Ritual Worth Showing Up For" },
-      { property: "og:description", content: "Pause. Connect. Reignite. Hand-packed kits for the couples who still love each other deeply." },
+      { title: "Rewindd — Date Night Box for Couples UK" },
+      { name: "description", content: "A romantic at-home date night kit for busy couples in the UK. Conversation cards, candle, oil and more — £40, dispatched in 2–3 business days." },
+      { property: "og:title", content: "Rewindd — Date Night Kit for Couples" },
+      { property: "og:description", content: "One intentional evening of conversation, connection and quality time — from the comfort of home." },
     ],
   }),
   component: Home,
 });
 
-const insideItems = [
-  { name: "52 Conversation Prompts", desc: "Linen-bound cards that move past 'how was your day' and into the questions you used to ask each other when you were still falling." },
-  { name: "Hand-poured Soy Candle", desc: "Vanilla, warm and quiet. Lights the room — and signals the shift. Phones away. Hearts open." },
-  { name: "Ritual Massage Oil", desc: "Pressed in amber glass. A small invitation to slow down, to touch on purpose, to remember the language of hands." },
-  { name: "Silk Eye Mask", desc: "Soft champagne silk for the closing meditation. Three minutes of nothing but breath, and the person beside you." },
-  { name: "Welcome Ritual Card", desc: "Your evening, laid out in three gentle acts. No guessing, no figuring it out. Just open it together and follow along." },
-  { name: "Matte Black Gift Box", desc: "Sealed with our seal. Heavy in the hand. Feels like the gift it is — for them, or for the two of you." },
-];
-
-const testimonials = [
-  { text: "We were roommates with rings on. One evening with Rewindd reminded us why we chose each other in the first place.", author: "Maya & James", loc: "Brooklyn, NY" },
-  { text: "I cried twice — the good kind. We've already ordered two more for our anniversaries.", author: "Priya & Rohan", loc: "London, UK" },
-  { text: "The kit does the hard part. You just have to show up. And we showed up — together.", author: "Elena & Marco", loc: "Lisbon, PT" },
-];
+const gallery = [openBox, flatlay, cardImg, detail1, detail2, detail3, boxImg, coupleCards];
 
 const steps = [
-  { n: 1, t: "Open Together", d: "Light the candle. Pour the wine. Read the welcome card aloud — slowly." },
-  { n: 2, t: "Move Through It", d: "Three quiet acts: remember, reveal, reconnect. The cards lead, you follow." },
-  { n: 3, t: "Close Slowly", d: "Slip on the silk mask. Three deep breaths. One promise made for the week ahead." },
+  {
+    n: 1,
+    t: "Open Together",
+    img: openBox,
+    lines: ["Light the candle.", "Start the playlist.", "Put your phones away."],
+  },
+  {
+    n: 2,
+    t: "Reconnect Through Conversation",
+    img: cardImg,
+    lines: ["Laugh.", "Reflect.", "Reconnect.", "Let the cards guide the conversation."],
+  },
+  {
+    n: 3,
+    t: "Close Slowly",
+    img: detail4,
+    lines: ["Massage.", "Touch.", "Presence.", "End the evening feeling closer than when it began."],
+  },
 ];
 
 const faqs = [
-  { q: "Who is this kit for?", a: "Couples who still love each other deeply — but whose calendar, kids, or careers have made true connection feel like a thing you used to do. Long-term partners, newlyweds, anyone wanting to come back to each other." },
-  { q: "How long does the evening take?", a: "Most couples spend ninety minutes to two hours with it. There's no clock — go at the pace that feels honest to the two of you." },
-  { q: "Is it reusable?", a: "Yes. The cards, oils, candle and box are designed to be returned to. We recommend one full ritual per month, or whenever the noise gets loud again." },
-  { q: "Do you ship internationally?", a: "Yes — we ship worldwide. Orders dispatch within 2–3 business days. International delivery times vary by destination." },
-  { q: "Can I gift it?", a: "Absolutely. The packaging is intentionally giftable — every kit ships sealed, ready to hand over. Add a note at checkout and we'll include it." },
+  { q: "Who is this kit for?", a: "Couples who still love each other but want to be more intentional about spending quality time together. Long-term partners, newlyweds, parents — anyone who wants one quiet evening back." },
+  { q: "How long does the evening take?", a: "Most couples spend ninety minutes to two hours. There's no clock — move at the pace that feels right for you." },
+  { q: "Is it reusable?", a: "Yes. The cards, candle, oil and box are designed to be returned to. We recommend one ritual per month, or whenever life gets loud again." },
+  { q: "Do you ship outside the UK?", a: "Not yet. Rewindd is currently available for delivery within the United Kingdom only." },
+  { q: "Can I gift it?", a: "Absolutely. Every kit ships in premium gift-ready packaging, sealed and ready to hand over." },
 ];
 
 function Home() {
@@ -63,84 +66,107 @@ function Home() {
         <div className="relative z-10 max-w-4xl text-center px-6">
           <div className="eyebrow mb-8 justify-center !text-[color:var(--color-gold)]">Date Night Ritual Kit</div>
           <h1 className="font-serif font-light text-cream leading-[1.05] text-[clamp(44px,8vw,96px)]">
-            We didn't fall out<br/>of love. <em>Life just<br/>got loud.</em>
+            We didn't fall out<br/>of love. <em>Life just<br/>got busy.</em>
           </h1>
-          <p className="mt-8 max-w-xl mx-auto text-cream/75 text-base md:text-lg leading-relaxed">
-            A premium reconnection ritual for the couples who still love each other deeply — but miss feeling truly close.
+          <p className="mt-8 max-w-xl mx-auto text-cream/80 text-base md:text-lg leading-relaxed">
+            For couples who still love each other but haven't had a proper moment together in a while.
+          </p>
+          <p className="mt-4 max-w-xl mx-auto text-cream/70 text-sm md:text-base leading-relaxed">
+            Rewindd guides you through one intentional evening of conversation, connection and quality time — all from the comfort of home.
           </p>
           <div className="mt-10 flex flex-wrap gap-3 justify-center">
-            <Link to="/kit" className="btn-primary">Order Yours — £40</Link>
-            <a href="#story" className="btn-outline">Explore Rewindd</a>
+            <Link to="/kit" className="btn-primary">Get Your Date Night Kit — £39.99</Link>
+            <a href="#story" className="btn-outline">Our Story</a>
           </div>
         </div>
         <a href="#story" className="absolute bottom-8 left-1/2 -translate-x-1/2 text-cream/50 text-[10px] tracking-[0.3em] uppercase">Scroll</a>
       </section>
 
-      {/* STORY */}
-      <section id="story" className="grid md:grid-cols-2 gap-16 md:gap-24 max-w-6xl mx-auto px-6 py-28 items-center">
+      {/* QUIET TRUTH */}
+      <section className="grid md:grid-cols-2 gap-16 md:gap-24 max-w-6xl mx-auto px-6 py-28 items-center">
         <div>
-          <img src={boxImg} alt="The matte black Rewindd box, sealed and ready to open" loading="lazy" width={1024} height={1024} className="w-full aspect-[4/5] object-cover" />
+          <img src={boxImg} alt="The Rewindd box, sealed and ready" loading="lazy" width={1024} height={1024} className="w-full aspect-[4/5] object-cover" />
         </div>
         <div>
           <div className="eyebrow mb-6">The Quiet Truth</div>
           <h2 className="section-title">
-            You still love them.<br/>You just <em>forgot how</em><br/>to find them.
+            You still love each other.<br/><em>Life has just been busy.</em>
           </h2>
-          <div className="mt-8 space-y-5 text-warm-gray leading-relaxed">
-            <p>The bills get paid. The kids get fed. The week ends. And somewhere in the middle of all of it, the two of you stopped meeting each other's eyes the way you used to.</p>
-            <p>It isn't a crisis. It isn't the end. It's the slow, quiet drift no one warns you about — the one that happens while you're busy holding everything else together.</p>
-            <p className="font-serif italic text-xl text-charcoal leading-snug">Rewindd is one evening, designed to bring you back to each other.</p>
+          <div className="mt-8 space-y-4 text-warm-gray leading-relaxed">
+            <p>Work gets busy.</p>
+            <p>The kids need attention.</p>
+            <p>The house always seems to need something.</p>
+            <p>Before you know it, most of your conversations become about what's for dinner, what's happening tomorrow, and who is doing the school run.</p>
+            <p>Not because the love is gone. But because life has been loud.</p>
+            <p className="font-serif italic text-xl text-charcoal leading-snug pt-2">
+              Rewindd was created for couples who still love each other but want to be more intentional about spending quality time together.
+            </p>
+            <p>One evening. No restaurant booking. No childminder. No pressure.</p>
+            <p className="font-serif italic text-lg text-burgundy">Just the two of you.</p>
           </div>
         </div>
       </section>
 
-      {/* WHAT'S INSIDE */}
-      <section className="bg-[color:var(--color-burgundy-deep)] text-cream px-6 py-28">
+      {/* INSIDE THE BOX — visual */}
+      <section id="product" className="bg-[color:var(--color-burgundy-deep)] text-cream px-6 py-28">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center">
+          <div className="text-center max-w-2xl mx-auto">
             <div className="eyebrow !text-[color:var(--color-gold)] justify-center">Inside The Box</div>
             <h2 className="section-title !text-cream mt-4">Everything you need.<br/><em>Nothing you don't.</em></h2>
-            <p className="mt-6 max-w-xl mx-auto text-cream/60">Each kit is hand-assembled in small batches, sealed by hand, and shipped in matte black packaging worth keeping long after the evening ends.</p>
+            <p className="mt-6 text-cream/65 leading-relaxed">
+              Every detail inside Rewindd was chosen to help you slow down, reconnect, and enjoy intentional time together.
+            </p>
           </div>
-          <div className="mt-16 grid md:grid-cols-2 gap-12 items-center">
-            <img src={openBox} alt="The Rewindd ritual kit, opened — candle, cards, oil, silk mask and welcome card" loading="lazy" width={1400} height={1700} className="w-full aspect-[4/5] object-cover" />
-            <ul className="space-y-7">
-              {insideItems.map((it) => (
-                <li key={it.name} className="border-b border-gold/15 pb-6">
-                  <div className="font-serif text-2xl text-cream">{it.name}</div>
-                  <p className="text-[13px] text-cream/55 mt-2 leading-relaxed">{it.desc}</p>
-                </li>
-              ))}
-            </ul>
+
+          <div className="mt-16 grid grid-cols-6 grid-rows-3 gap-3 md:gap-4 h-[560px] md:h-[760px]">
+            <div className="col-span-4 row-span-2 overflow-hidden">
+              <img src={flatlay} alt="Full Rewindd kit flat lay" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+            <div className="col-span-2 row-span-1 overflow-hidden">
+              <img src={cardImg} alt="Close-up of the conversation cards" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+            <div className="col-span-2 row-span-1 overflow-hidden">
+              <img src={detail2} alt="Close-up of the candle" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+            <div className="col-span-2 row-span-1 overflow-hidden">
+              <img src={detail1} alt="Close-up of the massage oil" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+            <div className="col-span-2 row-span-1 overflow-hidden">
+              <img src={openBox} alt="The open Rewindd box" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+            <div className="col-span-2 row-span-1 overflow-hidden">
+              <img src={detail3} alt="Lifestyle detail of the kit" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <Link to="/kit" className="btn-outline !text-gold !border-gold hover:!bg-gold hover:!text-burgundy-deep">View the Product</Link>
           </div>
         </div>
       </section>
 
-      {/* DETAIL STRIP */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-1 bg-black">
-        {[detail1, cardImg, detail3, detail2].map((src, i) => (
-          <div key={i} className="aspect-square overflow-hidden">
-            <img src={src} alt="Rewindd ritual kit detail" loading="lazy" width={800} height={800} className="w-full h-full object-cover brightness-90 hover:brightness-100 hover:scale-105 transition-all duration-700" />
-          </div>
-        ))}
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="bg-[color:var(--color-burgundy)] text-cream px-6 py-28 text-center">
-        <div className="eyebrow !text-[color:var(--color-gold)] justify-center">The Evening</div>
-        <h2 className="section-title !text-cream mt-4">Three soft acts.<br/><em>One quiet night.</em></h2>
-        <div className="mt-16 max-w-4xl mx-auto grid md:grid-cols-3 gap-12 md:gap-6">
+      {/* EXPERIENCE FLOW */}
+      <section className="bg-[color:var(--color-burgundy)] text-cream px-6 py-28">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="section-title !text-cream">Three simple steps.<br/><em>One intentional evening.</em></h2>
+        </div>
+        <div className="mt-16 max-w-6xl mx-auto grid md:grid-cols-3 gap-10">
           {steps.map((s) => (
-            <div key={s.n}>
-              <div className="w-14 h-14 mx-auto rounded-full border border-gold flex items-center justify-center font-serif text-xl text-gold mb-6">{s.n}</div>
-              <div className="font-serif text-2xl text-cream mb-3">{s.t}</div>
-              <p className="text-[13px] text-cream/55 leading-relaxed">{s.d}</p>
+            <div key={s.n} className="text-center">
+              <div className="aspect-[4/5] overflow-hidden mb-6">
+                <img src={s.img} alt={s.t} loading="lazy" className="w-full h-full object-cover" />
+              </div>
+              <div className="w-10 h-10 mx-auto rounded-full border border-gold flex items-center justify-center font-serif text-gold mb-4">{s.n}</div>
+              <div className="font-serif text-2xl text-cream mb-4">{s.t}</div>
+              <div className="space-y-1 text-cream/70 text-[14px] leading-relaxed">
+                {s.lines.map((l, i) => <p key={i}>{l}</p>)}
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* COUPLE PHOTO BREAK */}
+      {/* QUOTE PHOTO */}
       <section className="relative h-[70vh] min-h-[480px] overflow-hidden">
         <img src={coupleCards} alt="A couple drawing cards together by candlelight" loading="lazy" width={1920} height={1280} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -151,37 +177,45 @@ function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="py-28 px-6 bg-ivory">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="eyebrow justify-center">From Real Couples</div>
-          <h2 className="section-title mt-4">Words from the ones<br/>who <em>showed up.</em></h2>
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
-            {testimonials.map((t) => (
-              <div key={t.author} className="bg-white p-10 border-b-2 border-gold text-left relative">
-                <span className="absolute top-3 left-6 font-serif text-7xl text-gold/20 leading-none">“</span>
-                <p className="font-serif italic text-lg leading-relaxed text-charcoal">{t.text}</p>
-                <div className="mt-6">
-                  <div className="text-[11px] tracking-[0.18em] uppercase text-gold">{t.author}</div>
-                  <div className="text-[11px] text-warm-gray mt-1">{t.loc}</div>
-                </div>
-              </div>
-            ))}
+      {/* OUR STORY — founder */}
+      <section id="story" className="py-28 px-6 bg-cream">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-start">
+          <div className="md:sticky md:top-28">
+            <img src={about1} alt="Founder" loading="lazy" width={1024} height={1280} className="w-full aspect-[4/5] object-cover" />
+          </div>
+          <div>
+            <div className="eyebrow">Our Story</div>
+            <h2 className="section-title mt-4">The love was still there.<br/><em>Life just got busy.</em></h2>
+            <div className="mt-8 space-y-4 text-warm-gray leading-relaxed">
+              <p>Nobody really talks about marriages where nothing is wrong.</p>
+              <p>You still love each other.</p>
+              <p>You still care.</p>
+              <p>You still show up every day.</p>
+              <p>But somewhere between work, children, responsibilities and trying to keep life moving, quality time together quietly disappears.</p>
+              <p>You still talk. But you're not really connecting the way you used to.</p>
+              <p>And because you're not fighting, it's hard to explain.</p>
+              <p className="font-serif italic text-xl text-charcoal leading-snug">Nothing is wrong. But something feels missing.</p>
+              <p>When I started looking for ways couples could reconnect, everything felt too extreme.</p>
+              <p>Therapy. Relationship programmes. Fixing broken marriages.</p>
+              <p>But that wasn't us. We didn't need fixing.</p>
+              <p>We simply needed intentional time together again.</p>
+              <p>Something simple. Something realistic. Something we could do from home without the pressure of planning a date night, finding a babysitter or spending a fortune.</p>
+              <p className="font-serif italic text-xl text-burgundy leading-snug">That idea became Rewindd.</p>
+              <p>A simple invitation to slow down, put life on pause for a moment, and reconnect with the person you chose.</p>
+              <p>Because love doesn't always need fixing.</p>
+              <p className="font-serif italic text-lg text-charcoal">Sometimes it just needs time.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ABOUT PREVIEW */}
-      <section className="bg-cream py-28 px-6">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-          <img src={flatlay} alt="The full Rewindd ritual kit laid out — candle, cards, oil, silk mask" loading="lazy" width={1024} height={1280} className="w-full aspect-[4/5] object-cover" />
-          <div>
-            <div className="eyebrow">Our Story</div>
-            <h2 className="section-title mt-4">Built by two people<br/>who almost <em>drifted apart.</em></h2>
-            <p className="mt-6 text-warm-gray leading-relaxed">We made the first version of this kit for ourselves, on a Tuesday night, after a year that nearly broke us. It worked. So we made one for our closest friends. Then their friends. Now, it ships from our hands to yours.</p>
-            <Link to="/our-story" className="btn-outline !text-[color:var(--color-burgundy)] !border-[color:var(--color-burgundy)] mt-8 hover:!bg-[color:var(--color-burgundy)] hover:!text-cream">Read our story</Link>
+      {/* GALLERY STRIP */}
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-1 bg-black">
+        {gallery.slice(0, 4).map((src, i) => (
+          <div key={i} className="aspect-square overflow-hidden">
+            <img src={src} alt="Rewindd kit detail" loading="lazy" className="w-full h-full object-cover brightness-90 hover:brightness-100 hover:scale-105 transition-all duration-700" />
           </div>
-        </div>
+        ))}
       </section>
 
       {/* POLICIES */}
@@ -189,42 +223,40 @@ function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <div className="eyebrow justify-center">Shipping, Returns & Care</div>
-            <h2 className="section-title mt-4">The <em>small print,</em><br/>kindly written.</h2>
+            <h2 className="section-title mt-4"><em>Everything</em> you need to know.</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-6">
             <PolicyCard
-              title="Dispatch"
-              body="Every kit is hand-assembled and dispatched within 2–3 business days of your order. You'll receive tracking the moment it leaves us."
+              title="Shipping & Delivery"
+              body="Every Rewindd kit is carefully packed by hand and dispatched within 2–3 business days. You'll receive tracking details as soon as your order is on its way."
             />
             <PolicyCard
               title="Returns"
-              body="We accept returns within 14 days of delivery, on unopened kits with the seal intact. Return shipping is paid by the buyer. Please email us before sending anything back."
+              body="We accept returns within 14 days of delivery. To be eligible for a refund, all items must be returned in their original condition. For hygiene reasons, the massage oil seal must remain unopened and unbroken."
             />
             <PolicyCard
-              title="Damaged on arrival"
+              title="Damaged on Arrival"
               body={(
                 <>
-                  If your kit arrives damaged, send a photo of the product and its condition within <strong>48 hours of receipt</strong> to{" "}
-                  <a href="mailto:rewindd2026@gmail.com" className="text-burgundy underline underline-offset-2 hover:text-gold">rewindd2026@gmail.com</a>{" "}
-                  and we'll replace it, free of charge.
+                  If your order arrives damaged or incorrect, please email us within <strong>48 hours of delivery</strong> with photos of the item and packaging at{" "}
+                  <a href="mailto:rewindd2026@gmail.com" className="text-burgundy underline underline-offset-2 hover:text-gold">rewindd2026@gmail.com</a>. We'll arrange a replacement as quickly as possible.
                 </>
               )}
             />
             <PolicyCard
-              title="International shipping"
-              body="We ship worldwide. Duties and import taxes may apply on arrival and are the buyer's responsibility — please check your local rules before ordering."
+              title="UK Delivery Only"
+              body="At this time, Rewindd is available for delivery within the United Kingdom only."
             />
             <PolicyCard
-              title="Order changes"
-              body="Need to change an address or cancel? Reach out within 24 hours of ordering and we'll do our best — once the kit is sealed and shipped we can't recall it."
+              title="Changing of Order"
+              body="Need to update your delivery address or cancel your order? Please contact us within 2 hours of placing your order. Once your order has been processed, changes can no longer be made."
             />
             <PolicyCard
-              title="Get in touch"
+              title="Get in Touch"
               body={(
                 <>
-                  Questions, gifting requests, or anything in between — write to{" "}
-                  <a href="mailto:rewindd2026@gmail.com" className="text-burgundy underline underline-offset-2 hover:text-gold">rewindd2026@gmail.com</a>.
-                  We reply within one business day.
+                  Questions, gifting enquiries or order support?{" "}
+                  <a href="mailto:rewindd2026@gmail.com" className="text-burgundy underline underline-offset-2 hover:text-gold">rewindd2026@gmail.com</a>. We aim to respond within one business day.
                 </>
               )}
             />
@@ -245,6 +277,18 @@ function Home() {
         </div>
       </section>
 
+      {/* CONTACT */}
+      <section id="contact" className="py-24 px-6 bg-ivory border-t border-burgundy/10">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="eyebrow justify-center">Contact Us</div>
+          <h2 className="section-title mt-4">Say <em>hello.</em></h2>
+          <p className="mt-6 text-warm-gray leading-relaxed">
+            Questions, gifting enquiries or order support — we'd love to hear from you. We aim to respond within one business day.
+          </p>
+          <a href="mailto:rewindd2026@gmail.com" className="btn-primary mt-8 inline-block">rewindd2026@gmail.com</a>
+        </div>
+      </section>
+
       {/* FINAL CTA */}
       <section className="relative py-32 px-6 text-center text-cream overflow-hidden bg-charcoal">
         <img src={detail4} alt="" loading="lazy" width={1024} height={1024} className="absolute inset-0 w-full h-full object-cover opacity-30" />
@@ -254,7 +298,7 @@ function Home() {
           <h2 className="font-serif font-light text-[clamp(40px,6vw,72px)] leading-[1.1] text-cream">
             The love is still there.<br/><em>Come find it.</em>
           </h2>
-          <Link to="/kit" className="btn-primary mt-10">Order Your Kit — £40</Link>
+          <Link to="/kit" className="btn-primary mt-10">Get Your Date Night Kit — £39.99</Link>
         </div>
       </section>
     </SiteLayout>
@@ -265,7 +309,7 @@ function PolicyCard({ title, body }: { title: string; body: React.ReactNode }) {
   return (
     <div className="bg-white p-8 border border-burgundy/10 hover:border-gold transition-colors">
       <div className="font-serif text-xl text-burgundy-deep mb-3">{title}</div>
-      <p className="text-sm text-warm-gray leading-relaxed">{body}</p>
+      <div className="text-sm text-warm-gray leading-relaxed">{body}</div>
     </div>
   );
 }
