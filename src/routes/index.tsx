@@ -219,13 +219,21 @@ function Home() {
         </div>
       </section>
 
-      {/* GALLERY STRIP */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-1 bg-black">
-        {gallery.slice(0, 4).map((src, i) => (
-          <div key={i} className="aspect-square overflow-hidden">
-            <img src={src} alt="Rewindd kit detail" loading="lazy" className="w-full h-full object-cover brightness-90 hover:brightness-100 hover:scale-105 transition-all duration-700" />
-          </div>
-        ))}
+      {/* GALLERY CAROUSEL */}
+      <section className="bg-black py-2">
+        <Carousel opts={{ loop: true, align: "start" }} className="w-full">
+          <CarouselContent className="-ml-1">
+            {gallery.map((src, i) => (
+              <CarouselItem key={i} className="pl-1 basis-1/2 md:basis-1/4">
+                <div className="aspect-square overflow-hidden">
+                  <img src={src} alt="Rewindd kit detail" loading="lazy" className="w-full h-full object-cover brightness-90 hover:brightness-100 hover:scale-105 transition-all duration-700" />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="left-3 bg-black/40 text-cream border-cream/30 hover:bg-black/60" />
+          <CarouselNext className="right-3 bg-black/40 text-cream border-cream/30 hover:bg-black/60" />
+        </Carousel>
       </section>
 
       {/* POLICIES */}
