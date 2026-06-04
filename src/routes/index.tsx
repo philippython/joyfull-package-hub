@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteLayout } from "@/components/site-layout";
+import {
+  Carousel, CarouselContent, CarouselItem,
+  CarouselNext, CarouselPrevious,
+} from "@/components/ui/carousel";
 import heroImg from "@/assets/photo-couple-mask.jpg";
 import boxImg from "@/assets/photo-box.jpg";
 import openBox from "@/assets/photo-open-box.webp";
