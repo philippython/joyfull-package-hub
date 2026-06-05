@@ -18,6 +18,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KitSlugRouteImport } from './routes/kit.$slug'
 
 const PoliciesRoute = PoliciesRouteImport.update({
   id: '/policies',
@@ -64,28 +65,35 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KitSlugRoute = KitSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => KitRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
-  '/kit': typeof KitRoute
+  '/kit': typeof KitRouteWithChildren
   '/login': typeof LoginRoute
   '/order-success': typeof OrderSuccessRoute
   '/our-story': typeof OurStoryRoute
   '/policies': typeof PoliciesRoute
+  '/kit/$slug': typeof KitSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
-  '/kit': typeof KitRoute
+  '/kit': typeof KitRouteWithChildren
   '/login': typeof LoginRoute
   '/order-success': typeof OrderSuccessRoute
   '/our-story': typeof OurStoryRoute
   '/policies': typeof PoliciesRoute
+  '/kit/$slug': typeof KitSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,11 +101,12 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
-  '/kit': typeof KitRoute
+  '/kit': typeof KitRouteWithChildren
   '/login': typeof LoginRoute
   '/order-success': typeof OrderSuccessRoute
   '/our-story': typeof OurStoryRoute
   '/policies': typeof PoliciesRoute
+  '/kit/$slug': typeof KitSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/order-success'
     | '/our-story'
     | '/policies'
+    | '/kit/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/order-success'
     | '/our-story'
     | '/policies'
+    | '/kit/$slug'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/order-success'
     | '/our-story'
     | '/policies'
+    | '/kit/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -140,7 +152,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
-  KitRoute: typeof KitRoute
+  KitRoute: typeof KitRouteWithChildren
   LoginRoute: typeof LoginRoute
   OrderSuccessRoute: typeof OrderSuccessRoute
   OurStoryRoute: typeof OurStoryRoute
@@ -212,15 +224,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kit/$slug': {
+      id: '/kit/$slug'
+      path: '/$slug'
+      fullPath: '/kit/$slug'
+      preLoaderRoute: typeof KitSlugRouteImport
+      parentRoute: typeof KitRoute
+    }
   }
 }
+
+interface KitRouteChildren {
+  KitSlugRoute: typeof KitSlugRoute
+}
+
+const KitRouteChildren: KitRouteChildren = {
+  KitSlugRoute: KitSlugRoute,
+}
+
+const KitRouteWithChildren = KitRoute._addFileChildren(KitRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
-  KitRoute: KitRoute,
+  KitRoute: KitRouteWithChildren,
   LoginRoute: LoginRoute,
   OrderSuccessRoute: OrderSuccessRoute,
   OurStoryRoute: OurStoryRoute,

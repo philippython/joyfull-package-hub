@@ -15,7 +15,6 @@ import detail1 from "@/assets/photo-detail-1.avif";
 import detail2 from "@/assets/photo-detail-2.avif";
 import detail3 from "@/assets/photo-detail-3.avif";
 import detail4 from "@/assets/photo-detail-4.avif";
-import about1 from "@/assets/about-1.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,38 +31,9 @@ export const Route = createFileRoute("/")({
 const gallery = [openBox, flatlay, cardImg, detail1, detail2, detail3, boxImg, coupleCards];
 
 const steps = [
-  {
-    n: 1,
-    t: "Open Together",
-    img: openBox,
-    lines: ["Light the candle.", "Start the playlist.", "Put your phones away."],
-  },
-  {
-    n: 2,
-    t: "Reconnect Through Conversation",
-    img: cardImg,
-    lines: ["Laugh.", "Reflect.", "Reconnect.", "Let the cards guide the conversation."],
-  },
-  {
-    n: 3,
-    t: "Close Slowly",
-    img: detail4,
-    lines: ["Massage.", "Touch.", "Presence.", "End the evening feeling closer than when it began."],
-  },
-];
-
-const faqs = [
-  { q: "Who is Rewindd for?", a: "Rewindd is for couples who still love each other but want to spend more intentional time together. It is ideal for busy couples, married couples, parents, newlyweds and couples who want a meaningful date night at home." },
-  { q: "Is this only for couples having problems?", a: "No. Rewindd is not therapy and it is not for fixing broken relationships. It is for couples who are okay, but feel like life has become busy and quality time has slipped away." },
-  { q: "What if my partner isn't good at deep conversations?", a: "That is exactly why the cards exist. The prompts guide the conversation, so neither of you has to force it or think of what to say." },
-  { q: "Will it feel awkward?", a: "No pressure. The guide and cards are designed to make the evening feel natural, relaxed and easy to follow." },
-  { q: "How long does the experience take?", a: "Most couples spend around 60–90 minutes with Rewindd, but there is no strict timing. You can go at your own pace." },
-  { q: "Is it a one-time experience?", a: "No. The cards and guide can be used again for future date nights. The candle and massage oil are consumable items." },
-  { q: "Can I buy it as a gift?", a: "Yes. Rewindd makes a thoughtful gift for anniversaries, weddings, birthdays, Valentine's Day, newlyweds or couples who deserve intentional time together." },
-  { q: "Can I return my kit?", a: "Yes. We accept returns within 14 days of delivery, provided the kit is returned in its original condition and the massage oil seal remains unopened. For hygiene reasons, kits with opened oil bottles cannot be returned." },
-  { q: "What if my order arrives damaged?", a: "Please email us within 48 hours of delivery with photos of the item and packaging, and we'll arrange a replacement as quickly as possible." },
-  { q: "How quickly will my order arrive?", a: "Orders are dispatched within 2–3 business days. Tracking details will be sent once your order is on its way." },
-  { q: "Do you ship outside the UK?", a: "At the moment, Rewindd is available for UK delivery only." },
+  { n: 1, t: "Open Together", img: openBox, lines: ["Light the candle.", "Start the playlist.", "Put your phones away."] },
+  { n: 2, t: "Reconnect Through Conversation", img: cardImg, lines: ["Laugh.", "Reflect.", "Reconnect.", "Let the cards guide the conversation."] },
+  { n: 3, t: "Close Slowly", img: detail4, lines: ["Massage.", "Touch.", "Presence.", "End the evening feeling closer."] },
 ];
 
 function Home() {
@@ -86,14 +56,13 @@ function Home() {
           </p>
           <div className="mt-10 flex flex-wrap gap-3 justify-center">
             <Link to="/kit" className="btn-primary">Get Your Date Night Kit — £39.99</Link>
-            <a href="#story" className="btn-outline">Our Story</a>
+            <Link to="/our-story" className="btn-outline">Our Story</Link>
           </div>
         </div>
-        <a href="#story" className="absolute bottom-8 left-1/2 -translate-x-1/2 text-cream/50 text-[10px] tracking-[0.3em] uppercase">Scroll</a>
       </section>
 
       {/* QUIET TRUTH */}
-      <section className="grid md:grid-cols-2 gap-16 md:gap-24 max-w-6xl mx-auto px-6 py-28 items-center">
+      <section className="grid md:grid-cols-2 gap-16 md:gap-24 max-w-6xl mx-auto px-6 py-24 items-center">
         <div>
           <img src={boxImg} alt="The Rewindd box, sealed and ready" loading="lazy" width={1024} height={1024} className="w-full aspect-[4/5] object-cover" />
         </div>
@@ -103,22 +72,19 @@ function Home() {
             You still love each other.<br/><em>Life has just been busy.</em>
           </h2>
           <div className="mt-8 space-y-4 text-warm-gray leading-relaxed">
-            <p>Work gets busy.</p>
-            <p>The kids need attention.</p>
-            <p>The house always seems to need something.</p>
+            <p>Work gets busy. The kids need attention. The house always seems to need something.</p>
             <p>Before you know it, most of your conversations become about what's for dinner, what's happening tomorrow, and who is doing the school run.</p>
             <p>Not because the love is gone. But because life has been loud.</p>
             <p className="font-serif italic text-xl text-charcoal leading-snug pt-2">
               Rewindd was created for couples who still love each other but want to be more intentional about spending quality time together.
             </p>
-            <p>One evening. No restaurant booking. No childminder. No pressure.</p>
             <p className="font-serif italic text-lg text-burgundy">Just the two of you.</p>
           </div>
         </div>
       </section>
 
       {/* INSIDE THE BOX — visual */}
-      <section id="product" className="bg-[color:var(--color-burgundy-deep)] text-cream px-6 py-28">
+      <section id="product" className="bg-[color:var(--color-burgundy-deep)] text-cream px-6 py-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto">
             <div className="eyebrow !text-[color:var(--color-gold)] justify-center">Inside The Box</div>
@@ -129,34 +95,22 @@ function Home() {
           </div>
 
           <div className="mt-16 grid grid-cols-6 grid-rows-3 gap-3 md:gap-4 h-[560px] md:h-[760px]">
-            <div className="col-span-4 row-span-2 overflow-hidden">
-              <img src={flatlay} alt="Full Rewindd kit flat lay" loading="lazy" className="w-full h-full object-cover" />
-            </div>
-            <div className="col-span-2 row-span-1 overflow-hidden">
-              <img src={cardImg} alt="Close-up of the conversation cards" loading="lazy" className="w-full h-full object-cover" />
-            </div>
-            <div className="col-span-2 row-span-1 overflow-hidden">
-              <img src={detail2} alt="Close-up of the candle" loading="lazy" className="w-full h-full object-cover" />
-            </div>
-            <div className="col-span-2 row-span-1 overflow-hidden">
-              <img src={detail1} alt="Close-up of the massage oil" loading="lazy" className="w-full h-full object-cover" />
-            </div>
-            <div className="col-span-2 row-span-1 overflow-hidden">
-              <img src={openBox} alt="The open Rewindd box" loading="lazy" className="w-full h-full object-cover" />
-            </div>
-            <div className="col-span-2 row-span-1 overflow-hidden">
-              <img src={detail3} alt="Lifestyle detail of the kit" loading="lazy" className="w-full h-full object-cover" />
-            </div>
+            <div className="col-span-4 row-span-2 overflow-hidden"><img src={flatlay} alt="Full Rewindd kit flat lay" loading="lazy" className="w-full h-full object-cover" /></div>
+            <div className="col-span-2 row-span-1 overflow-hidden"><img src={cardImg} alt="Conversation cards" loading="lazy" className="w-full h-full object-cover" /></div>
+            <div className="col-span-2 row-span-1 overflow-hidden"><img src={detail2} alt="Candle" loading="lazy" className="w-full h-full object-cover" /></div>
+            <div className="col-span-2 row-span-1 overflow-hidden"><img src={detail1} alt="Massage oil" loading="lazy" className="w-full h-full object-cover" /></div>
+            <div className="col-span-2 row-span-1 overflow-hidden"><img src={openBox} alt="Open box" loading="lazy" className="w-full h-full object-cover" /></div>
+            <div className="col-span-2 row-span-1 overflow-hidden"><img src={detail3} alt="Lifestyle detail" loading="lazy" className="w-full h-full object-cover" /></div>
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/kit" className="btn-outline !text-gold !border-gold hover:!bg-gold hover:!text-burgundy-deep">View the Product</Link>
+            <Link to="/kit" className="btn-outline !text-gold !border-gold hover:!bg-gold hover:!text-burgundy-deep">View All Kits</Link>
           </div>
         </div>
       </section>
 
       {/* EXPERIENCE FLOW */}
-      <section className="bg-[color:var(--color-burgundy)] text-cream px-6 py-28">
+      <section className="bg-[color:var(--color-burgundy)] text-cream px-6 py-24">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="section-title !text-cream">Three simple steps.<br/><em>One intentional evening.</em></h2>
         </div>
@@ -187,38 +141,6 @@ function Home() {
         </div>
       </section>
 
-      {/* OUR STORY — founder */}
-      <section id="story" className="py-28 px-6 bg-cream">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-start">
-          <div className="md:sticky md:top-28">
-            <img src={about1} alt="Founder" loading="lazy" width={1024} height={1280} className="w-full aspect-[4/5] object-cover" />
-          </div>
-          <div>
-            <div className="eyebrow">Our Story</div>
-            <h2 className="section-title mt-4">The love was still there.<br/><em>Life just got busy.</em></h2>
-            <div className="mt-8 space-y-4 text-warm-gray leading-relaxed">
-              <p>Nobody really talks about marriages where nothing is wrong.</p>
-              <p>You still love each other.</p>
-              <p>You still care.</p>
-              <p>You still show up every day.</p>
-              <p>But somewhere between work, children, responsibilities and trying to keep life moving, quality time together quietly disappears.</p>
-              <p>You still talk. But you're not really connecting the way you used to.</p>
-              <p>And because you're not fighting, it's hard to explain.</p>
-              <p className="font-serif italic text-xl text-charcoal leading-snug">Nothing is wrong. But something feels missing.</p>
-              <p>When I started looking for ways couples could reconnect, everything felt too extreme.</p>
-              <p>Therapy. Relationship programmes. Fixing broken marriages.</p>
-              <p>But that wasn't us. We didn't need fixing.</p>
-              <p>We simply needed intentional time together again.</p>
-              <p>Something simple. Something realistic. Something we could do from home without the pressure of planning a date night, finding a babysitter or spending a fortune.</p>
-              <p className="font-serif italic text-xl text-burgundy leading-snug">That idea became Rewindd.</p>
-              <p>A simple invitation to slow down, put life on pause for a moment, and reconnect with the person you chose.</p>
-              <p>Because love doesn't always need fixing.</p>
-              <p className="font-serif italic text-lg text-charcoal">Sometimes it just needs time.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* GALLERY CAROUSEL */}
       <section className="bg-black py-2">
         <Carousel opts={{ loop: true, align: "start" }} className="w-full">
@@ -236,74 +158,12 @@ function Home() {
         </Carousel>
       </section>
 
-      {/* POLICIES */}
-      <section id="policies" className="py-28 px-6 bg-ivory border-t border-burgundy/10">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-16">
-            <div className="eyebrow justify-center">Shipping, Returns & Care</div>
-            <h2 className="section-title mt-4"><em>Everything</em> you need to know.</h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <PolicyCard
-              title="Shipping & Delivery"
-              body="Every Rewindd kit is carefully packed by hand and dispatched within 2–3 business days. You'll receive tracking details as soon as your order is on its way."
-            />
-            <PolicyCard
-              title="Returns"
-              body="We accept returns within 14 days of delivery. To be eligible for a refund, all items must be returned in their original condition. For hygiene reasons, the massage oil seal must remain unopened and unbroken."
-            />
-            <PolicyCard
-              title="Damaged on Arrival"
-              body={(
-                <>
-                  If your order arrives damaged or incorrect, please email us within <strong>48 hours of delivery</strong> with photos of the item and packaging at{" "}
-                  <a href="mailto:rewindd2026@gmail.com" className="text-burgundy underline underline-offset-2 hover:text-gold">rewindd2026@gmail.com</a>. We'll arrange a replacement as quickly as possible.
-                </>
-              )}
-            />
-            <PolicyCard
-              title="UK Delivery Only"
-              body="At this time, Rewindd is available for delivery within the United Kingdom only."
-            />
-            <PolicyCard
-              title="Changing of Order"
-              body="Need to update your delivery address or cancel your order? Please contact us within 2 hours of placing your order. Once your order has been processed, changes can no longer be made."
-            />
-            <PolicyCard
-              title="Get in Touch"
-              body={(
-                <>
-                  Questions, gifting enquiries or order support?{" "}
-                  <a href="mailto:rewindd2026@gmail.com" className="text-burgundy underline underline-offset-2 hover:text-gold">rewindd2026@gmail.com</a>. We aim to respond within one business day.
-                </>
-              )}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-24 px-6 bg-cream">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center">
-            <div className="eyebrow justify-center">Questions</div>
-            <h2 className="section-title mt-4">Things people <em>ask us.</em></h2>
-          </div>
-          <div className="mt-12">
-            {faqs.map((f, i) => <FaqItem key={i} q={f.q} a={f.a} />)}
-          </div>
-        </div>
-      </section>
-
-      {/* CONTACT */}
-      <section id="contact" className="py-24 px-6 bg-ivory border-t border-burgundy/10">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="eyebrow justify-center">Contact Us</div>
-          <h2 className="section-title mt-4">Say <em>hello.</em></h2>
-          <p className="mt-6 text-warm-gray leading-relaxed">
-            Questions, gifting enquiries or order support — we'd love to hear from you. We aim to respond within one business day.
-          </p>
-          <a href="mailto:rewindd2026@gmail.com" className="btn-primary mt-8 inline-block">rewindd2026@gmail.com</a>
+      {/* QUICK NAV CARDS */}
+      <section className="bg-cream py-20 px-6">
+        <div className="max-w-5xl mx-auto grid sm:grid-cols-3 gap-6">
+          <NavCard to="/our-story" eyebrow="Our Story" title="The love was still there." />
+          <NavCard to="/faq" eyebrow="Questions" title="Things people ask us." />
+          <NavCard to="/policies" eyebrow="Shipping & Returns" title="Everything you need to know." />
         </div>
       </section>
 
@@ -323,24 +183,12 @@ function Home() {
   );
 }
 
-function PolicyCard({ title, body }: { title: string; body: React.ReactNode }) {
+function NavCard({ to, eyebrow, title }: { to: "/our-story" | "/faq" | "/policies"; eyebrow: string; title: string }) {
   return (
-    <div className="bg-white p-8 border border-burgundy/10 hover:border-gold transition-colors">
-      <div className="font-serif text-xl text-burgundy-deep mb-3">{title}</div>
-      <div className="text-sm text-warm-gray leading-relaxed">{body}</div>
-    </div>
-  );
-}
-
-function FaqItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="border-b border-burgundy/15">
-      <button onClick={() => setOpen(!open)} className="w-full flex justify-between items-center py-6 text-left font-serif text-lg text-burgundy-deep hover:text-burgundy transition">
-        {q}
-        <span className={`text-gold text-xl transition-transform ${open ? "rotate-45" : ""}`}>+</span>
-      </button>
-      {open && <p className="pb-6 text-sm text-warm-gray leading-relaxed">{a}</p>}
-    </div>
+    <Link to={to} className="block bg-white p-8 border border-burgundy/10 hover:border-gold transition-colors group">
+      <div className="eyebrow">{eyebrow}</div>
+      <div className="font-serif text-xl text-burgundy-deep mt-3 group-hover:text-burgundy transition">{title}</div>
+      <div className="mt-4 text-[11px] tracking-[0.2em] uppercase text-gold">Read more →</div>
+    </Link>
   );
 }
