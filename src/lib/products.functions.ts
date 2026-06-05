@@ -5,19 +5,15 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
 function publicClient() {
-  return createClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY!,
-    { auth: { persistSession: false } },
-  );
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { persistSession: false },
+  });
 }
 
 function adminClient() {
-  return createClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  );
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: { persistSession: false },
+  });
 }
 
 export const listProducts = createServerFn({ method: "GET" }).handler(async () => {
@@ -56,21 +52,25 @@ const addressSchema = z.object({
 
 export const placeOrder = createServerFn({ method: "POST" })
   .inputValidator((raw) =>
-    z.object({
-      productId: z.string().uuid(),
-      quantity: z.number().int().min(1).max(10),
-      customerName: z.string().trim().min(1).max(120),
-      customerEmail: z.string().trim().email().max(200),
-      phone: z.string().trim().max(40).optional().or(z.literal("")),
-      shippingAddress: addressSchema,
-      notes: z.string().trim().max(500).optional().or(z.literal("")),
-    }).parse(raw),
+    z
+      .object({
+        productId: z.string().uuid(),
+        quantity: z.number().int().min(1).max(10),
+        customerName: z.string().trim().min(1).max(120),
+        customerEmail: z.string().trim().email().max(200),
+        phone: z.string().trim().max(40).optional().or(z.literal("")),
+        shippingAddress: addressSchema,
+        notes: z.string().trim().max(500).optional().or(z.literal("")),
+      })
+      .parse(raw),
   )
   .handler(async ({ data }) => {
     const admin = adminClient();
     const { data: product, error: pErr } = await admin
-      .from("products").select("price_cents, currency, is_active")
-      .eq("id", data.productId).single();
+      .from("products")
+      .select("price_cents, currency, is_active")
+      .eq("id", data.productId)
+      .single();
     if (pErr || !product) throw new Error("Product not found");
     if (!product.is_active) throw new Error("Product unavailable");
 
@@ -109,7 +109,11 @@ export const getMyOrders = createServerFn({ method: "GET" })
 async function assertAdmin(userId: string) {
   const admin = adminClient();
   const { data, error } = await admin
-    .from("user_roles").select("id").eq("user_id", userId).eq("role", "admin").maybeSingle();
+    .from("user_roles")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("role", "admin")
+    .maybeSingle();
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Forbidden: admin role required");
 }
@@ -119,10 +123,14 @@ export const claimAdmin = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const admin = adminClient();
     const { count, error: cErr } = await admin
-      .from("user_roles").select("*", { count: "exact", head: true }).eq("role", "admin");
+      .from("user_roles")
+      .select("*", { count: "exact", head: true })
+      .eq("role", "admin");
     if (cErr) throw new Error(cErr.message);
     if ((count ?? 0) > 0) throw new Error("An admin already exists. Contact the existing admin.");
-    const { error } = await admin.from("user_roles").insert({ user_id: context.userId, role: "admin" });
+    const { error } = await admin
+      .from("user_roles")
+      .insert({ user_id: context.userId, role: "admin" });
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -132,7 +140,11 @@ export const checkIsAdmin = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const admin = adminClient();
     const { data } = await admin
-      .from("user_roles").select("id").eq("user_id", context.userId).eq("role", "admin").maybeSingle();
+      .from("user_roles")
+      .select("id")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
     return { isAdmin: !!data };
   });
 
@@ -141,7 +153,10 @@ export const adminListProducts = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.userId);
     const admin = adminClient();
-    const { data, error } = await admin.from("products").select("*").order("sort_order", { ascending: true });
+    const { data, error } = await admin
+      .from("products")
+      .select("*")
+      .order("sort_order", { ascending: true });
     if (error) throw new Error(error.message);
     return data ?? [];
   });
@@ -152,7 +167,9 @@ export const adminListOrders = createServerFn({ method: "GET" })
     await assertAdmin(context.userId);
     const admin = adminClient();
     const { data, error } = await admin
-      .from("orders").select("*, products(name)").order("created_at", { ascending: false });
+      .from("orders")
+      .select("*, products(name)")
+      .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
     return data ?? [];
   });
@@ -160,12 +177,18 @@ export const adminListOrders = createServerFn({ method: "GET" })
 const productInput = z.object({
   id: z.string().uuid().optional(),
   name: z.string().trim().min(1).max(120),
-  slug: z.string().trim().min(1).max(120).regex(/^[a-z0-9-]+$/, "lowercase, numbers, dashes only"),
+  slug: z
+    .string()
+    .trim()
+    .min(1)
+    .max(120)
+    .regex(/^[a-z0-9-]+$/, "lowercase, numbers, dashes only"),
   tagline: z.string().trim().max(200).optional().or(z.literal("")),
   description: z.string().trim().min(1).max(4000),
   price_cents: z.number().int().min(0).max(10_000_000),
   currency: z.string().trim().length(3).default("usd"),
   image_url: z.string().trim().max(500).optional().or(z.literal("")),
+  image_urls: z.array(z.string().trim().url()).max(10).optional().or(z.literal([])),
   items_included: z.array(z.string().trim().min(1).max(300)).max(30),
   is_active: z.boolean().default(true),
   sort_order: z.number().int().min(0).max(1000).default(0),
@@ -177,7 +200,12 @@ export const upsertProduct = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const admin = adminClient();
-    const payload = { ...data, image_url: data.image_url || null, tagline: data.tagline || null };
+    const payload = {
+      ...data,
+      image_url: data.image_url || null,
+      image_urls: data.image_urls?.length ? data.image_urls : null,
+      tagline: data.tagline || null,
+    };
     if (data.id) {
       const { error } = await admin.from("products").update(payload).eq("id", data.id);
       if (error) throw new Error(error.message);
@@ -202,10 +230,12 @@ export const deleteProduct = createServerFn({ method: "POST" })
 export const updateOrderStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((raw) =>
-    z.object({
-      id: z.string().uuid(),
-      status: z.enum(["pending", "paid", "shipped", "delivered", "cancelled"]),
-    }).parse(raw),
+    z
+      .object({
+        id: z.string().uuid(),
+        status: z.enum(["pending", "paid", "shipped", "delivered", "cancelled"]),
+      })
+      .parse(raw),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
