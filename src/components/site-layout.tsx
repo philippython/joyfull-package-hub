@@ -2,11 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 const NAV = [
-  { label: "Home", href: "/#top" },
-  { label: "Product", href: "/kit" },
-  { label: "Our Story", href: "/#story" },
-  { label: "Policy", href: "/#policies" },
-  { label: "Contact Us", href: "/#contact" },
+  { label: "Home", to: "/" as const },
+  { label: "Kits", to: "/kit" as const },
+  { label: "Our Story", to: "/our-story" as const },
+  { label: "FAQ", to: "/faq" as const },
+  { label: "Policies", to: "/policies" as const },
+  { label: "Contact", to: "/contact" as const },
 ];
 
 export function SiteNav() {
@@ -33,10 +34,10 @@ export function SiteNav() {
         </Link>
         <ul className="hidden md:flex items-center gap-7 list-none">
           {NAV.map((item) => (
-            <li key={item.href}>
-              <a href={item.href} className="text-[11px] tracking-[0.18em] uppercase text-cream/75 hover:text-gold transition">
+            <li key={item.to}>
+              <Link to={item.to} className="text-[11px] tracking-[0.18em] uppercase text-cream/75 hover:text-gold transition">
                 {item.label}
-              </a>
+              </Link>
             </li>
           ))}
           <li><Link to="/kit" className="btn-primary !py-2.5">Get the Kit</Link></li>
@@ -55,14 +56,14 @@ export function SiteNav() {
         <div className="md:hidden border-t border-gold/15 bg-[rgba(13,10,8,0.98)] px-6 py-6">
           <ul className="flex flex-col gap-4 list-none">
             {NAV.map((item) => (
-              <li key={item.href}>
-                <a
-                  href={item.href}
+              <li key={item.to}>
+                <Link
+                  to={item.to}
                   onClick={() => setOpen(false)}
                   className="block text-[12px] tracking-[0.18em] uppercase text-cream/85 hover:text-gold transition py-1"
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
             <li className="pt-2">
@@ -88,16 +89,17 @@ export function SiteFooter() {
         <div>
           <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Explore</h4>
           <ul className="space-y-2 text-[13px] list-none">
-            <li><a href="/#top" className="hover:text-gold transition">Home</a></li>
-            <li><Link to="/kit" className="hover:text-gold transition">Date Night Kit</Link></li>
-            <li><a href="/#story" className="hover:text-gold transition">Our Story</a></li>
-            <li><a href="/#contact" className="hover:text-gold transition">Contact Us</a></li>
+            <li><Link to="/" className="hover:text-gold transition">Home</Link></li>
+            <li><Link to="/kit" className="hover:text-gold transition">Date Night Kits</Link></li>
+            <li><Link to="/our-story" className="hover:text-gold transition">Our Story</Link></li>
+            <li><Link to="/faq" className="hover:text-gold transition">FAQ</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Policies</h4>
           <ul className="space-y-2 text-[13px] list-none">
-            <li><a href="/#policies" className="hover:text-gold transition">Shipping, Returns & Care</a></li>
+            <li><Link to="/policies" className="hover:text-gold transition">Shipping, Returns & Care</Link></li>
+            <li><Link to="/contact" className="hover:text-gold transition">Contact Us</Link></li>
           </ul>
         </div>
         <div>
