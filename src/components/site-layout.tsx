@@ -136,23 +136,14 @@ export function SiteFooter() {
                 Shipping, Returns & Care
               </Link>
             </li>
-            <li>
-              <Link to="/contact" className="hover:text-gold transition">
-                Contact Us
-              </Link>
-            </li>
           </ul>
         </div>
         <div>
-          <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Contact</h4>
+          <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Contact Us</h4>
           <p className="text-[13px] text-cream/55 leading-relaxed">
             <a href="mailto:rewindd2026@gmail.com" className="hover:text-gold transition">
               rewindd2026@gmail.com
             </a>
-            <br />
-            Hand-packed in small batches.
-            <br />
-            Dispatched within 2–3 business days.
           </p>
         </div>
       </div>
