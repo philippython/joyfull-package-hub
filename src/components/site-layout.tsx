@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 const NAV = [
   { label: "Home", to: "/" as const },
-  { label: "Kits", to: "/kit" as const },
+  { label: "Rewindd Kit", to: "/kit" as const },
   { label: "Our Story", to: "/our-story" as const },
   { label: "FAQ", to: "/faq" as const },
   { label: "Policies", to: "/policies" as const },
@@ -29,18 +29,29 @@ export function SiteNav() {
       }}
     >
       <div className="flex items-center justify-between px-6 md:px-10 py-4">
-        <Link to="/" className="font-serif italic text-2xl tracking-wide text-gold" onClick={() => setOpen(false)}>
+        <Link
+          to="/"
+          className="font-serif italic text-2xl tracking-wide text-gold"
+          onClick={() => setOpen(false)}
+        >
           Rewindd
         </Link>
         <ul className="hidden md:flex items-center gap-7 list-none">
           {NAV.map((item) => (
             <li key={item.to}>
-              <Link to={item.to} className="text-[11px] tracking-[0.18em] uppercase text-cream/75 hover:text-gold transition">
+              <Link
+                to={item.to}
+                className="text-[11px] tracking-[0.18em] uppercase text-cream/75 hover:text-gold transition"
+              >
                 {item.label}
               </Link>
             </li>
           ))}
-          <li><Link to="/kit" className="btn-primary !py-2.5">Get the Kit</Link></li>
+          <li>
+            <Link to="/kit" className="btn-primary !py-2.5">
+              Get the Rewindd Kit
+            </Link>
+          </li>
         </ul>
         <button
           aria-label="Toggle menu"
@@ -67,7 +78,13 @@ export function SiteNav() {
               </li>
             ))}
             <li className="pt-2">
-              <Link to="/kit" onClick={() => setOpen(false)} className="btn-primary w-full text-center !block">Get the Kit</Link>
+              <Link
+                to="/kit"
+                onClick={() => setOpen(false)}
+                className="btn-primary w-full text-center !block"
+              >
+                Get the Rewindd Kit
+              </Link>
             </li>
           </ul>
         </div>
@@ -89,24 +106,53 @@ export function SiteFooter() {
         <div>
           <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Explore</h4>
           <ul className="space-y-2 text-[13px] list-none">
-            <li><Link to="/" className="hover:text-gold transition">Home</Link></li>
-            <li><Link to="/kit" className="hover:text-gold transition">Date Night Kits</Link></li>
-            <li><Link to="/our-story" className="hover:text-gold transition">Our Story</Link></li>
-            <li><Link to="/faq" className="hover:text-gold transition">FAQ</Link></li>
+            <li>
+              <Link to="/" className="hover:text-gold transition">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/kit" className="hover:text-gold transition">
+                Rewindd Kits
+              </Link>
+            </li>
+            <li>
+              <Link to="/our-story" className="hover:text-gold transition">
+                Our Story
+              </Link>
+            </li>
+            <li>
+              <Link to="/faq" className="hover:text-gold transition">
+                FAQ
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
           <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Policies</h4>
           <ul className="space-y-2 text-[13px] list-none">
-            <li><Link to="/policies" className="hover:text-gold transition">Shipping, Returns & Care</Link></li>
-            <li><Link to="/contact" className="hover:text-gold transition">Contact Us</Link></li>
+            <li>
+              <Link to="/policies" className="hover:text-gold transition">
+                Shipping, Returns & Care
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className="hover:text-gold transition">
+                Contact Us
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
           <h4 className="text-[11px] tracking-[0.2em] uppercase text-gold mb-4">Contact</h4>
           <p className="text-[13px] text-cream/55 leading-relaxed">
-            <a href="mailto:rewindd2026@gmail.com" className="hover:text-gold transition">rewindd2026@gmail.com</a><br/>
-            Hand-packed in small batches.<br/>Dispatched within 2–3 business days.
+            <a href="mailto:rewindd2026@gmail.com" className="hover:text-gold transition">
+              rewindd2026@gmail.com
+            </a>
+            <br />
+            Hand-packed in small batches.
+            <br />
+            Dispatched within 2–3 business days.
           </p>
         </div>
       </div>

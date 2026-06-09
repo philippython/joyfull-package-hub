@@ -122,9 +122,9 @@ function KitDetail() {
               <button onClick={() => setCheckoutOpen(true)} className="btn-primary">
                 Add to Cart
               </button>
-              <a href="#checkout" onClick={() => setCheckoutOpen(true)} className="btn-outline">
+              <button onClick={() => setCheckoutOpen(true)} className="btn-outline">
                 Buy Now
-              </a>
+              </button>
             </div>
 
             <div className="mt-10 space-y-4 text-warm-gray leading-relaxed text-[15px] whitespace-pre-line">

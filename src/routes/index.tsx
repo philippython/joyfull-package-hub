@@ -1,13 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteLayout } from "@/components/site-layout";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+// carousel removed from homepage per request
 import heroImg from "@/assets/photo-couple-mask.jpg";
 import boxImg from "@/assets/photo-box.jpg";
 import openBox from "@/assets/photo-open-box.webp";
@@ -94,9 +88,6 @@ function Home() {
               GET YOUR DATE NIGHT KIT
             </Link>
             <div className="hero-price">£39.99</div>
-            <Link to="/our-story" className="btn-outline mt-2">
-              Our Story
-            </Link>
           </div>
         </div>
       </section>
@@ -212,7 +203,7 @@ function Home() {
               to="/kit"
               className="btn-outline !text-gold !border-gold hover:!bg-gold hover:!text-burgundy-deep"
             >
-              View All Kits
+              Order your date night kit
             </Link>
           </div>
         </div>
@@ -260,31 +251,19 @@ function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-12 left-0 right-0 text-center px-6">
           <p className="font-serif italic text-2xl md:text-4xl text-cream leading-snug max-w-2xl mx-auto">
-            "The kit does the hard part. <em>You just have to show up.</em>"
+            "One evening. No distractions. Just us."
           </p>
         </div>
       </section>
 
-      {/* GALLERY CAROUSEL */}
-      <section className="bg-black py-2">
-        <Carousel opts={{ loop: true, align: "start" }} className="w-full">
-          <CarouselContent className="-ml-1">
-            {gallery.map((src, i) => (
-              <CarouselItem key={i} className="pl-1 basis-1/2 md:basis-1/4">
-                <div className="aspect-square overflow-hidden">
-                  <img
-                    src={src}
-                    alt="Rewindd kit detail"
-                    loading="lazy"
-                    className="w-full h-full object-cover brightness-90 hover:brightness-100 hover:scale-105 transition-all duration-700"
-                  />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="left-3 bg-black/40 text-cream border-cream/30 hover:bg-black/60" />
-          <CarouselNext className="right-3 bg-black/40 text-cream border-cream/30 hover:bg-black/60" />
-        </Carousel>
+      {/* CTA AFTER QUOTE PHOTO */}
+      <section className="bg-black py-12">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <Link to="/kit" className="btn-primary px-8 py-3 text-[13px] tracking-[0.22em]">
+            Get your Kit — Now
+          </Link>
+          <div className="hero-price mt-4 text-cream">£39.99</div>
+        </div>
       </section>
 
       {/* QUICK NAV CARDS */}
