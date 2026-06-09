@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { SiteLayout } from "@/components/site-layout";
 import { listProducts } from "@/lib/products.functions";
@@ -6,6 +6,16 @@ import { formatCents } from "@/lib/format";
 import flatlay from "@/assets/photo-flatlay.webp";
 
 const FALLBACK_IMG = flatlay;
+
+function normalizeImageUrl(url: string) {
+  if (!url) return url;
+  const trimmed = String(url).trim();
+  if (!trimmed) return trimmed;
+  if (/^data:/i.test(trimmed)) return trimmed;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith("/")) return trimmed;
+  return `/assets/${trimmed}`;
+}
 
 export const Route = createFileRoute("/kit")({
   head: () => ({
@@ -56,26 +66,38 @@ function KitListPage() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((p: any) => {
-                const firstImage =
+                const firstImageRaw =
                   Array.isArray(p.image_urls) && p.image_urls.length
                     ? p.image_urls[0]
                     : typeof p.image_url === "string" && p.image_url.trim()
                       ? p.image_url
                       : null;
-                const imageSrc = firstImage || FALLBACK_IMG;
+                const imageSrc =
+                  (firstImageRaw && normalizeImageUrl(firstImageRaw)) || FALLBACK_IMG;
                 return (
-                  <Link
+                  <a
                     key={p.id}
-                    to={`/kit/${p.slug}`}
+                    href={`/kit/${p.slug}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `/kit/${p.slug}`;
+                    }}
                     className="group block bg-white border border-burgundy/10 hover:border-gold transition-colors"
                   >
-                    <div className="aspect-[4/5] overflow-hidden bg-cream">
-                      <img
-                        src={imageSrc}
-                        alt={p.name}
-                        loading="lazy"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
+                    <div className="relative">
+                      <div className="aspect-[4/5] overflow-hidden bg-cream">
+                        <img
+                          src={imageSrc}
+                          alt={p.name}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                      </div>
+                      {Array.isArray(p.image_urls) && p.image_urls.length > 1 && (
+                        <div className="absolute top-3 right-3 bg-black/60 text-cream text-xs px-2 py-1 rounded">
+                          {p.image_urls.length} photos
+                        </div>
+                      )}
                     </div>
                     <div className="p-6">
                       <div className="font-serif text-xl text-burgundy-deep">{p.name}</div>
@@ -89,7 +111,7 @@ function KitListPage() {
                         </span>
                       </div>
                     </div>
-                  </Link>
+                  </a>
                 );
               })}
             </div>

@@ -38,6 +38,17 @@ const galleryImages = [
   detail4,
 ];
 
+function normalizeImageUrl(url: string) {
+  if (!url) return url;
+  const trimmed = url.trim();
+  if (!trimmed) return trimmed;
+  if (/^data:/i.test(trimmed)) return trimmed;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith("/")) return trimmed;
+  // Treat bare filenames as assets in /assets/
+  return `/assets/${trimmed}`;
+}
+
 export const Route = createFileRoute("/kit/$slug")({
   head: ({ params }) => ({
     meta: [
@@ -83,12 +94,14 @@ function KitDetail() {
 
   const items = (product.items_included as string[] | null) ?? [];
   const imageUrls = Array.isArray(product.image_urls)
-    ? (product.image_urls as string[]).filter((url) => typeof url === "string" && url.trim())
+    ? (product.image_urls as string[])
+        .filter((url) => typeof url === "string" && url.trim())
+        .map(normalizeImageUrl)
     : [];
   const productImages = imageUrls.length
     ? imageUrls.slice(0, 10)
     : product.image_url
-      ? [product.image_url, ...galleryImages]
+      ? [normalizeImageUrl(product.image_url), ...galleryImages]
       : galleryImages;
 
   return (
@@ -123,12 +136,17 @@ function KitDetail() {
               <button onClick={() => setCheckoutOpen(true)} className="btn-primary">
                 Add to Cart
               </button>
-              <Link
-                to={`/checkout?slug=${product.slug}`}
-                className="btn-outline inline-flex items-center"
+              <a
+                id="buy-now-cta"
+                href={`/checkout?slug=${product.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = `/checkout?slug=${product.slug}`;
+                }}
+                className="btn-outline inline-flex items-center text-lg font-semibold px-4 py-2"
               >
                 Buy Now
-              </Link>
+              </a>
             </div>
 
             <div className="mt-10 space-y-4 text-warm-gray leading-relaxed text-[15px] whitespace-pre-line">
@@ -198,12 +216,63 @@ function KitDetail() {
 function ProductCarousel({ images }: { images: string[] }) {
   const [api, setApi] = useState<any>();
   const [selected, setSelected] = useState(0);
+  const [fallbackIndex, setFallbackIndex] = useState(0);
+  const [useFallback, setUseFallback] = useState(false);
 
   useEffect(() => {
     if (!api) return;
     setSelected(api.selectedScrollSnap());
     api.on("select", () => setSelected(api.selectedScrollSnap()));
   }, [api]);
+
+  // If embla/api hasn't initialized after a short delay, enable simple fallback
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (!api) setUseFallback(true);
+    }, 400);
+    return () => clearTimeout(t);
+  }, [api]);
+
+  if (useFallback || !Carousel) {
+    return (
+      <div className="space-y-3">
+        <div className="relative">
+          <div className="aspect-square overflow-hidden bg-white">
+            <img
+              src={images[fallbackIndex]}
+              alt={`Product photo ${fallbackIndex + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <button
+            aria-label="Previous"
+            onClick={() => setFallbackIndex((i) => (i - 1 + images.length) % images.length)}
+            className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 text-cream p-2 rounded-full"
+          >
+            ‹
+          </button>
+          <button
+            aria-label="Next"
+            onClick={() => setFallbackIndex((i) => (i + 1) % images.length)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 text-cream p-2 rounded-full"
+          >
+            ›
+          </button>
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {images.map((src, i) => (
+            <button
+              key={i}
+              onClick={() => setFallbackIndex(i)}
+              className={`min-w-[5rem] aspect-square overflow-hidden border-2 transition ${fallbackIndex === i ? "border-gold" : "border-transparent opacity-70 hover:opacity-100"}`}
+            >
+              <img src={src} alt="" className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-3">
