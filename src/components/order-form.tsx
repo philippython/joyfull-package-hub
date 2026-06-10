@@ -77,9 +77,6 @@ export default function ({
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <div className="eyebrow !text-[color:var(--color-burgundy)] mb-2 justify-center">
-        Place Your Order
-      </div>
       <h2 className="section-title text-center mb-8">
         Complete your <em>checkout.</em>
       </h2>
@@ -175,10 +172,6 @@ export default function ({
       >
         {submitting ? "Redirecting to secure checkout…" : "Pay Securely with Stripe"}
       </button>
-      <p className="text-[11px] text-warm-gray text-center">
-        UK delivery only · Dispatched in 2–3 business days · You'll be redirected to Stripe to
-        complete payment securely.
-      </p>
     </form>
   );
 }
