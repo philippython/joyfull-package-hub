@@ -66,25 +66,27 @@ function KitListPage() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((p: any) => {
-                const firstImageRaw =
-                  Array.isArray(p.image_urls) && p.image_urls.length
-                    ? p.image_urls[0]
-                    : typeof p.image_url === "string" && p.image_url.trim()
-                      ? p.image_url
-                      : null;
-                const imageSrc =
-                  (firstImageRaw && normalizeImageUrl(firstImageRaw)) || FALLBACK_IMG;
+                const urls: string[] = Array.isArray(p.image_urls)
+                  ? p.image_urls.filter((u: any) => typeof u === "string" && u.trim())
+                  : [];
+                const primary =
+                  urls[0] ||
+                  (typeof p.image_url === "string" && p.image_url.trim() ? p.image_url : null);
+                const imageSrc = (primary && normalizeImageUrl(primary)) || FALLBACK_IMG;
+                const thumbs = urls.slice(1, 5).map(normalizeImageUrl);
                 return (
-                  <a
+                  <div
                     key={p.id}
-                    href={`/kit/${p.slug}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.location.href = `/kit/${p.slug}`;
-                    }}
-                    className="group block bg-white border border-burgundy/10 hover:border-gold transition-colors"
+                    className="group flex flex-col bg-white border border-burgundy/10 hover:border-gold transition-colors"
                   >
-                    <div className="relative">
+                    <a
+                      href={`/kit/${p.slug}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.href = `/kit/${p.slug}`;
+                      }}
+                      className="block relative"
+                    >
                       <div className="aspect-[4/5] overflow-hidden bg-cream">
                         <img
                           src={imageSrc}
@@ -93,25 +95,59 @@ function KitListPage() {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         />
                       </div>
-                      {Array.isArray(p.image_urls) && p.image_urls.length > 1 && (
+                      {urls.length > 1 && (
                         <div className="absolute top-3 right-3 bg-black/60 text-cream text-xs px-2 py-1 rounded">
-                          {p.image_urls.length} photos
+                          {urls.length} photos
                         </div>
                       )}
-                    </div>
-                    <div className="p-6">
+                    </a>
+                    {thumbs.length > 0 && (
+                      <div className="flex gap-2 px-4 pt-4">
+                        {thumbs.map((t, i) => (
+                          <a
+                            key={i}
+                            href={`/kit/${p.slug}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.location.href = `/kit/${p.slug}`;
+                            }}
+                            className="w-14 h-14 overflow-hidden border border-burgundy/10 hover:border-gold"
+                          >
+                            <img src={t} alt="" className="w-full h-full object-cover" />
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    <div className="p-6 flex-1 flex flex-col">
                       <div className="font-serif text-xl text-burgundy-deep">{p.name}</div>
                       {p.tagline && <p className="text-sm text-warm-gray mt-1">{p.tagline}</p>}
                       <div className="mt-4 flex items-center justify-between">
                         <span className="font-serif text-2xl text-burgundy-deep">
                           {formatCents(p.price_cents, p.currency)}
                         </span>
-                        <span className="text-[11px] tracking-[0.2em] uppercase text-gold group-hover:text-burgundy transition">
-                          View →
-                        </span>
                       </div>
+                      <a
+                        href={`/checkout?slug=${p.slug}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.location.href = `/checkout?slug=${p.slug}`;
+                        }}
+                        className="btn-primary text-center mt-5"
+                      >
+                        Order Now
+                      </a>
+                      <a
+                        href={`/kit/${p.slug}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.location.href = `/kit/${p.slug}`;
+                        }}
+                        className="text-center text-[11px] tracking-[0.2em] uppercase text-gold hover:text-burgundy transition mt-3"
+                      >
+                        View Details →
+                      </a>
                     </div>
-                  </a>
+                  </div>
                 );
               })}
             </div>

@@ -188,7 +188,7 @@ const productInput = z.object({
   price_cents: z.number().int().min(0).max(10_000_000),
   currency: z.string().trim().length(3).default("usd"),
   image_url: z.string().trim().max(500).optional().or(z.literal("")),
-  image_urls: z.array(z.string().trim().url()).max(10).optional().or(z.literal([])),
+  image_urls: z.array(z.string().trim().url()).max(10).optional().default([]),
   items_included: z.array(z.string().trim().min(1).max(300)).max(30),
   is_active: z.boolean().default(true),
   sort_order: z.number().int().min(0).max(1000).default(0),

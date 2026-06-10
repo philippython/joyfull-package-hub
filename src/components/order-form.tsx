@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { placeOrder } from "@/lib/products.functions";
+import { createCheckoutSession } from "@/lib/payments.functions";
 import { formatCents } from "@/lib/format";
 
 export default function ({
@@ -17,7 +17,7 @@ export default function ({
   onComplete?: (orderId: string) => void;
 }) {
   const navigate = useNavigate();
-  const place = useServerFn(placeOrder);
+  const checkout = useServerFn(createCheckoutSession);
   const [submitting, setSubmitting] = useState(false);
   const [qty, setQty] = useState(1);
   const [form, setForm] = useState({
@@ -41,7 +41,7 @@ export default function ({
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await place({
+      const res = await checkout({
         data: {
           productId,
           quantity: qty,
@@ -60,9 +60,13 @@ export default function ({
         },
       });
       if (onComplete) onComplete(res.orderId);
+      if (res?.url) {
+        window.location.href = res.url;
+        return;
+      }
       navigate({ to: "/order-success", search: { id: res.orderId } });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Order failed");
+      toast.error(err instanceof Error ? err.message : "Checkout failed");
     } finally {
       setSubmitting(false);
     }
@@ -169,11 +173,11 @@ export default function ({
         disabled={submitting}
         className="btn-primary w-full mt-2 disabled:opacity-60"
       >
-        {submitting ? "Placing order…" : "Complete Order"}
+        {submitting ? "Redirecting to secure checkout…" : "Pay Securely with Stripe"}
       </button>
       <p className="text-[11px] text-warm-gray text-center">
-        UK delivery only · Dispatched in 2–3 business days · Payment instructions will be emailed
-        (Stripe checkout coming soon).
+        UK delivery only · Dispatched in 2–3 business days · You'll be redirected to Stripe to
+        complete payment securely.
       </p>
     </form>
   );

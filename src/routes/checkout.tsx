@@ -5,8 +5,6 @@ import { getProductBySlug } from "@/lib/products.functions";
 import OrderForm from "@/components/order-form";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createCheckoutSession } from "@/lib/payments.functions";
-import { useState } from "react";
 
 export const Route = createFileRoute("/checkout")({
   validateSearch: (s) => z.object({ slug: z.string().min(1) }).parse(s),
@@ -44,9 +42,6 @@ function Checkout() {
             />
           </div>
           <div className="mt-6 text-center">
-            <StripeCheckoutButton product={product} />
-          </div>
-          <div className="mt-6 text-center">
             <Link to={`/kit/${product.slug}`} className="btn-outline">
               Back to product
             </Link>
@@ -54,32 +49,5 @@ function Checkout() {
         </div>
       </section>
     </SiteLayout>
-  );
-}
-
-function StripeCheckoutButton({ product }: { product: any }) {
-  const create = useServerFn(createCheckoutSession);
-  const [loading, setLoading] = useState(false);
-  const onClick = async () => {
-    setLoading(true);
-    try {
-      const res = await create({
-        data: {
-          productId: product.id,
-          priceCents: product.price_cents,
-          currency: product.currency,
-        },
-      });
-      if (res?.url) window.location.href = res.url;
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Stripe checkout failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-  return (
-    <button onClick={onClick} disabled={loading} className="btn-primary">
-      {loading ? "Redirecting…" : "Pay with Card"}
-    </button>
   );
 }
