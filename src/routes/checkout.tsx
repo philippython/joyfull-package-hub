@@ -5,8 +5,6 @@ import { getProductBySlug } from "@/lib/products.functions";
 import OrderForm from "@/components/order-form";
 import { useServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createCheckoutSession } from "@/lib/payments.functions";
-import { useState } from "react";
 
 export const Route = createFileRoute("/checkout")({
   validateSearch: (s) => z.object({ slug: z.string().min(1) }).parse(s),
