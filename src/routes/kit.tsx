@@ -136,17 +136,8 @@ function KitListPage() {
                       >
                         Order Now
                       </a>
-                      <a
-                        href={`/kit/${p.slug}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          window.location.href = `/kit/${p.slug}`;
-                        }}
-                        className="text-center text-[11px] tracking-[0.2em] uppercase text-gold hover:text-burgundy transition mt-3"
-                      >
-                        View Details →
-                      </a>
                     </div>
+
                   </div>
                 );
               })}
