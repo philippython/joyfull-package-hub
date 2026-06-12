@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { createCheckoutSession } from "@/lib/payments.functions";
+import { createPayPalOrder } from "@/lib/paypal.functions";
 import { formatCents } from "@/lib/format";
 
 export default function ({
@@ -18,8 +19,11 @@ export default function ({
 }) {
   const navigate = useNavigate();
   const checkout = useServerFn(createCheckoutSession);
-  const [submitting, setSubmitting] = useState(false);
+  const paypal = useServerFn(createPayPalOrder);
+  const [submitting, setSubmitting] = useState<null | "stripe" | "paypal">(null);
+
   const [qty, setQty] = useState(1);
+
   const [form, setForm] = useState({
     customerName: "",
     customerEmail: "",
