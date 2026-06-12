@@ -1,9 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { SiteLayout } from "@/components/site-layout";
 import { listProducts } from "@/lib/products.functions";
 import { formatCents } from "@/lib/format";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import flatlay from "@/assets/photo-flatlay.webp";
+
 
 const FALLBACK_IMG = flatlay;
 
