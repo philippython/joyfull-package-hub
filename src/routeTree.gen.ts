@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PoliciesRouteImport } from './routes/policies'
+import { Route as PaypalReturnRouteImport } from './routes/paypal-return'
 import { Route as OurStoryRouteImport } from './routes/our-story'
 import { Route as OrderSuccessRouteImport } from './routes/order-success'
 import { Route as LoginRouteImport } from './routes/login'
@@ -24,6 +25,11 @@ import { Route as KitSlugRouteImport } from './routes/kit.$slug'
 const PoliciesRoute = PoliciesRouteImport.update({
   id: '/policies',
   path: '/policies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaypalReturnRoute = PaypalReturnRouteImport.update({
+  id: '/paypal-return',
+  path: '/paypal-return',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OurStoryRoute = OurStoryRouteImport.update({
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/order-success': typeof OrderSuccessRoute
   '/our-story': typeof OurStoryRoute
+  '/paypal-return': typeof PaypalReturnRoute
   '/policies': typeof PoliciesRoute
   '/kit/$slug': typeof KitSlugRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/order-success': typeof OrderSuccessRoute
   '/our-story': typeof OurStoryRoute
+  '/paypal-return': typeof PaypalReturnRoute
   '/policies': typeof PoliciesRoute
   '/kit/$slug': typeof KitSlugRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/order-success': typeof OrderSuccessRoute
   '/our-story': typeof OurStoryRoute
+  '/paypal-return': typeof PaypalReturnRoute
   '/policies': typeof PoliciesRoute
   '/kit/$slug': typeof KitSlugRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/order-success'
     | '/our-story'
+    | '/paypal-return'
     | '/policies'
     | '/kit/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/order-success'
     | '/our-story'
+    | '/paypal-return'
     | '/policies'
     | '/kit/$slug'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/order-success'
     | '/our-story'
+    | '/paypal-return'
     | '/policies'
     | '/kit/$slug'
   fileRoutesById: FileRoutesById
@@ -169,6 +181,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OrderSuccessRoute: typeof OrderSuccessRoute
   OurStoryRoute: typeof OurStoryRoute
+  PaypalReturnRoute: typeof PaypalReturnRoute
   PoliciesRoute: typeof PoliciesRoute
 }
 
@@ -179,6 +192,13 @@ declare module '@tanstack/react-router' {
       path: '/policies'
       fullPath: '/policies'
       preLoaderRoute: typeof PoliciesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paypal-return': {
+      id: '/paypal-return'
+      path: '/paypal-return'
+      fullPath: '/paypal-return'
+      preLoaderRoute: typeof PaypalReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/our-story': {
@@ -274,8 +294,19 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OrderSuccessRoute: OrderSuccessRoute,
   OurStoryRoute: OurStoryRoute,
+  PaypalReturnRoute: PaypalReturnRoute,
   PoliciesRoute: PoliciesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
