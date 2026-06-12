@@ -87,7 +87,7 @@ function Home() {
             <Link to="/kit" className="btn-primary px-8 py-3 text-[13px] tracking-[0.22em]">
               GET YOUR DATE NIGHT KIT
             </Link>
-            <div className="hero-price">£39.99</div>
+            <div className="hero-price">£40</div>
           </div>
         </div>
       </section>
@@ -137,9 +137,9 @@ function Home() {
               Inside The Box
             </div>
             <h2 className="section-title !text-cream mt-4">
-              Everything you need.
+              One Kit.
               <br />
-              <em>Nothing you don't.</em>
+              <em>More Time Together.</em>
             </h2>
             <p className="mt-6 text-cream/80 leading-relaxed">
               Every detail inside Rewindd was chosen to help you slow down, reconnect, and enjoy
@@ -262,7 +262,7 @@ function Home() {
           <Link to="/kit" className="btn-primary px-8 py-3 text-[13px] tracking-[0.22em]">
             Get your Kit — Now
           </Link>
-          <div className="hero-price mt-4 text-cream">£39.99</div>
+          <div className="hero-price mt-4 text-cream">£40</div>
         </div>
       </section>
 
@@ -298,7 +298,7 @@ function Home() {
             <em>Come find it.</em>
           </h2>
           <Link to="/kit" className="btn-primary mt-10">
-            Get Your Date Night Kit — £39.99
+            Get Your Date Night Kit — £40
           </Link>
         </div>
       </section>

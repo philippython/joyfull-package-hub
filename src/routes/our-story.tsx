@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site-layout";
-import about1 from "@/assets/about-1.jpg";
-import about2 from "@/assets/about-2.jpg";
+import coupleKitchen from "@/assets/our-story-couple.jpeg";
+
 
 export const Route = createFileRoute("/our-story")({
   head: () => ({
@@ -49,14 +49,12 @@ function OurStory() {
             ))}
           </div>
 
-          {/* Smaller, balanced images */}
-          <div className="mt-12 grid grid-cols-2 gap-3 md:gap-5 max-w-xl mx-auto">
-            <img src={about1} alt="Founder" loading="lazy" width={800} height={1000} className="w-full aspect-[4/5] object-cover" />
-            <img src={about2} alt="Quiet morning" loading="lazy" width={800} height={1000} className="w-full aspect-[4/5] object-cover mt-6" />
+          <div className="mt-12 max-w-md mx-auto">
+            <img src={coupleKitchen} alt="A couple sharing a quiet morning together" loading="lazy" className="w-full aspect-[3/4] object-cover" />
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/kit" className="btn-primary">Get Your Date Night Kit — £39.99</Link>
+            <Link to="/kit" className="btn-primary">Get Your Date Night Kit — £40</Link>
           </div>
         </div>
       </section>
