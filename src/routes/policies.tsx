@@ -46,7 +46,7 @@ function PoliciesPage() {
           )} />
         </div>
         <div className="text-center mt-14">
-          <Link to="/kit" className="btn-primary">Get Your Date Night Kit — £39.99</Link>
+          <Link to="/kit" className="btn-primary">Get Your Date Night Kit — £40</Link>
         </div>
       </section>
     </SiteLayout>
