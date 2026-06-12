@@ -123,3 +123,76 @@ function KitListPage() {
     </SiteLayout>
   );
 }
+
+function KitCarousel({ images, slug, name }: { images: string[]; slug: string; name: string }) {
+  const [api, setApi] = useState<CarouselApi | undefined>();
+  const [selected, setSelected] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+    setSelected(api.selectedScrollSnap());
+    const onSelect = () => setSelected(api.selectedScrollSnap());
+    api.on("select", onSelect);
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
+
+  useEffect(() => {
+    if (!api || images.length < 2) return;
+    const t = setInterval(() => api.scrollNext(), 4500);
+    return () => clearInterval(t);
+  }, [api, images.length]);
+
+  const go = () => {
+    window.location.href = `/kit/${slug}`;
+  };
+
+  return (
+    <div className="relative">
+      <Carousel setApi={setApi} opts={{ loop: true }} className="w-full">
+        <CarouselContent>
+          {images.map((src, i) => (
+            <CarouselItem key={i}>
+              <button
+                type="button"
+                onClick={go}
+                aria-label={`View ${name}`}
+                className="block w-full aspect-[4/5] overflow-hidden bg-cream"
+              >
+                <img
+                  src={src}
+                  alt={`${name} — photo ${i + 1}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                />
+              </button>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        {images.length > 1 && (
+          <>
+            <CarouselPrevious className="left-3" />
+            <CarouselNext className="right-3" />
+          </>
+        )}
+      </Carousel>
+      {images.length > 1 && (
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Go to photo ${i + 1}`}
+              onClick={() => api?.scrollTo(i)}
+              className={`h-1.5 rounded-full transition-all ${
+                selected === i ? "w-6 bg-gold" : "w-1.5 bg-white/70"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
