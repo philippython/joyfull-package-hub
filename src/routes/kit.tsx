@@ -1,9 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { SiteLayout } from "@/components/site-layout";
 import { listProducts } from "@/lib/products.functions";
 import { formatCents } from "@/lib/format";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import flatlay from "@/assets/photo-flatlay.webp";
+
 
 const FALLBACK_IMG = flatlay;
 
@@ -69,55 +79,18 @@ function KitListPage() {
                 const urls: string[] = Array.isArray(p.image_urls)
                   ? p.image_urls.filter((u: any) => typeof u === "string" && u.trim())
                   : [];
-                const primary =
-                  urls[0] ||
-                  (typeof p.image_url === "string" && p.image_url.trim() ? p.image_url : null);
-                const imageSrc = (primary && normalizeImageUrl(primary)) || FALLBACK_IMG;
-                const thumbs = urls.slice(1, 5).map(normalizeImageUrl);
+                const fromDb = urls.length
+                  ? urls.map(normalizeImageUrl)
+                  : typeof p.image_url === "string" && p.image_url.trim()
+                    ? [normalizeImageUrl(p.image_url)]
+                    : [];
+                const images = fromDb.length ? fromDb : [FALLBACK_IMG];
                 return (
                   <div
                     key={p.id}
                     className="group flex flex-col bg-white border border-burgundy/10 hover:border-gold transition-colors"
                   >
-                    <a
-                      href={`/kit/${p.slug}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.location.href = `/kit/${p.slug}`;
-                      }}
-                      className="block relative"
-                    >
-                      <div className="aspect-[4/5] overflow-hidden bg-cream">
-                        <img
-                          src={imageSrc}
-                          alt={p.name}
-                          loading="lazy"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                      </div>
-                      {urls.length > 1 && (
-                        <div className="absolute top-3 right-3 bg-black/60 text-cream text-xs px-2 py-1 rounded">
-                          {urls.length} photos
-                        </div>
-                      )}
-                    </a>
-                    {thumbs.length > 0 && (
-                      <div className="flex gap-2 px-4 pt-4">
-                        {thumbs.map((t, i) => (
-                          <a
-                            key={i}
-                            href={`/kit/${p.slug}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              window.location.href = `/kit/${p.slug}`;
-                            }}
-                            className="w-14 h-14 overflow-hidden border border-burgundy/10 hover:border-gold"
-                          >
-                            <img src={t} alt="" className="w-full h-full object-cover" />
-                          </a>
-                        ))}
-                      </div>
-                    )}
+                    <KitCarousel images={images} slug={p.slug} name={p.name} />
                     <div className="p-6 flex-1 flex flex-col">
                       <div className="font-serif text-xl text-burgundy-deep">{p.name}</div>
                       {p.tagline && <p className="text-sm text-warm-gray mt-1">{p.tagline}</p>}
@@ -138,6 +111,8 @@ function KitListPage() {
                       </a>
                     </div>
 
+
+
                   </div>
                 );
               })}
@@ -148,3 +123,76 @@ function KitListPage() {
     </SiteLayout>
   );
 }
+
+function KitCarousel({ images, slug, name }: { images: string[]; slug: string; name: string }) {
+  const [api, setApi] = useState<CarouselApi | undefined>();
+  const [selected, setSelected] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+    setSelected(api.selectedScrollSnap());
+    const onSelect = () => setSelected(api.selectedScrollSnap());
+    api.on("select", onSelect);
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
+
+  useEffect(() => {
+    if (!api || images.length < 2) return;
+    const t = setInterval(() => api.scrollNext(), 4500);
+    return () => clearInterval(t);
+  }, [api, images.length]);
+
+  const go = () => {
+    window.location.href = `/kit/${slug}`;
+  };
+
+  return (
+    <div className="relative">
+      <Carousel setApi={setApi} opts={{ loop: true }} className="w-full">
+        <CarouselContent>
+          {images.map((src, i) => (
+            <CarouselItem key={i}>
+              <button
+                type="button"
+                onClick={go}
+                aria-label={`View ${name}`}
+                className="block w-full aspect-[4/5] overflow-hidden bg-cream"
+              >
+                <img
+                  src={src}
+                  alt={`${name} — photo ${i + 1}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                />
+              </button>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        {images.length > 1 && (
+          <>
+            <CarouselPrevious className="left-3" />
+            <CarouselNext className="right-3" />
+          </>
+        )}
+      </Carousel>
+      {images.length > 1 && (
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Go to photo ${i + 1}`}
+              onClick={() => api?.scrollTo(i)}
+              className={`h-1.5 rounded-full transition-all ${
+                selected === i ? "w-6 bg-gold" : "w-1.5 bg-white/70"
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
