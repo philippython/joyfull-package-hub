@@ -25,7 +25,6 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
       throw new Error("Unauthorized: No request headers available");
     }
 
-    // Accept token from Authorization header OR from x-supabase-auth cookie header
     let token: string | null = null;
 
     const authHeader = request.headers.get("authorization");
@@ -33,16 +32,13 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
       token = authHeader.replace("Bearer ", "").trim();
     }
 
-    // Fallback: read from cookie (Supabase sets sb-<ref>-auth-token)
     if (!token) {
       const cookie = request.headers.get("cookie") ?? "";
-      // Supabase v2 stores session as JSON in cookie
       const match = cookie.match(/sb-[^=]+-auth-token=([^;]+)/);
       if (match) {
         try {
           const decoded = decodeURIComponent(match[1]);
           const parsed = JSON.parse(decoded);
-          // Could be array [access_token, refresh_token] or object
           token = Array.isArray(parsed) ? parsed[0] : (parsed?.access_token ?? null);
         } catch {
           // ignore parse errors
@@ -63,7 +59,13 @@ export const requireSupabaseAuth = createMiddleware({ type: "function" }).server
         persistSession: false,
         autoRefreshToken: false,
       },
+      realtime: {
+        params: { eventsPerSecond: -1 },
+      },
     });
+
+    // Disconnect realtime immediately — server functions don't need it
+    supabase.realtime.disconnect();
 
     const { data, error } = await supabase.auth.getUser(token);
     if (error || !data?.user) {
