@@ -1,7 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { SiteLayout } from "@/components/site-layout";
-// carousel removed from homepage per request
 import heroImg from "@/assets/photo-couple-mask.jpg";
 import boxImg from "@/assets/photo-box.jpg";
 import openBox from "@/assets/photo-open-box.webp";
@@ -20,7 +18,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "A romantic at-home date night kit for busy couples in the UK. Conversation cards, candle, oil and more — £40, dispatched in 2–3 business days.",
+          "A romantic at-home date night kit for busy couples in the UK. Conversation cards, candle, oil and more — £39.99, dispatched in 2–3 business days.",
       },
       { property: "og:title", content: "Rewindd — Date Night Kit for Couples" },
       {
@@ -32,8 +30,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Home,
 });
-
-const gallery = [openBox, flatlay, cardImg, detail1, detail2, detail3, boxImg, coupleCards];
 
 const steps = [
   {
@@ -74,20 +70,18 @@ function Home() {
             Date Night Ritual Kit
           </div>
           <h1 className="hero-headline">
-            We didn’t fall out of love.
+            We didn't fall out of love.
             <br />
             Life just got busy.
           </h1>
-
           <p className="hero-subhead">
-            For couples who still love each other but haven’t had quality time together in a while.
+            For couples who still love each other but haven't had quality time together in a while.
           </p>
-
           <div className="mt-6 flex flex-col items-center gap-2">
             <Link to="/kit" className="btn-primary px-8 py-3 text-[13px] tracking-[0.22em]">
               GET YOUR DATE NIGHT KIT
             </Link>
-            <div className="hero-price">£40</div>
+            <div className="hero-price">£39.99</div>
           </div>
         </div>
       </section>
@@ -129,7 +123,7 @@ function Home() {
         </div>
       </section>
 
-      {/* INSIDE THE BOX — visual */}
+      {/* INSIDE THE BOX */}
       <section id="product" className="bg-[color:var(--color-burgundy-deep)] text-cream px-6 py-24">
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto">
@@ -146,7 +140,6 @@ function Home() {
               intentional time together.
             </p>
           </div>
-
           <div className="mt-16 grid grid-cols-6 grid-rows-3 gap-3 md:gap-4 h-[560px] md:h-[760px]">
             <div className="col-span-4 row-span-2 overflow-hidden">
               <img
@@ -197,7 +190,6 @@ function Home() {
               />
             </div>
           </div>
-
           <div className="text-center mt-12">
             <Link
               to="/kit"
@@ -238,19 +230,20 @@ function Home() {
         </div>
       </section>
 
-      {/* QUOTE PHOTO */}
+      {/* QUOTE PHOTO — fixed */}
       <section className="relative h-[70vh] min-h-[480px] overflow-hidden">
+        {/* Image fills the entire section, cropped from centre */}
         <img
           src={coupleCards}
           alt="A couple drawing cards together by candlelight"
           loading="lazy"
-          width={1920}
-          height={1280}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute bottom-12 left-0 right-0 text-center px-6">
-          <p className="font-serif italic text-2xl md:text-4xl text-cream leading-snug max-w-2xl mx-auto">
+        {/* Dark gradient heavier at bottom so text is always readable */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+        {/* Quote pinned to bottom centre */}
+        <div className="absolute bottom-0 left-0 right-0 px-6 pb-14 text-center">
+          <p className="font-serif italic text-2xl md:text-4xl lg:text-5xl text-cream leading-snug max-w-2xl mx-auto drop-shadow-md">
             "One evening. No distractions. Just us."
           </p>
         </div>
@@ -262,7 +255,7 @@ function Home() {
           <Link to="/kit" className="btn-primary px-8 py-3 text-[13px] tracking-[0.22em]">
             Get your Kit — Now
           </Link>
-          <div className="hero-price mt-4 text-cream">£40</div>
+          <div className="hero-price mt-4 text-cream">£39.99</div>
         </div>
       </section>
 
@@ -298,7 +291,7 @@ function Home() {
             <em>Come find it.</em>
           </h2>
           <Link to="/kit" className="btn-primary mt-10">
-            Get Your Date Night Kit — £40
+            Get Your Date Night Kit — £39.99
           </Link>
         </div>
       </section>

@@ -6,7 +6,7 @@ import { createCheckoutSession } from "@/lib/payments.functions";
 import { createPayPalOrder } from "@/lib/paypal.functions";
 import { formatCents } from "@/lib/format";
 
-export default function ({
+export default function OrderForm({
   productId,
   priceCents,
   currency,
@@ -21,7 +21,6 @@ export default function ({
   const checkout = useServerFn(createCheckoutSession);
   const paypal = useServerFn(createPayPalOrder);
   const [submitting, setSubmitting] = useState<null | "stripe" | "paypal">(null);
-
   const [qty, setQty] = useState(1);
 
   const [form, setForm] = useState({
@@ -60,8 +59,20 @@ export default function ({
 
   const validateForm = () => {
     const f = form;
-    if (!f.customerName || !f.customerEmail || !f.line1 || !f.city || !f.postal_code || !f.country) {
+    if (
+      !f.customerName ||
+      !f.customerEmail ||
+      !f.line1 ||
+      !f.city ||
+      !f.postal_code ||
+      !f.country
+    ) {
       toast.error("Please complete all required fields.");
+      return false;
+    }
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRe.test(f.customerEmail)) {
+      toast.error("Please enter a valid email address.");
       return false;
     }
     return true;
@@ -80,44 +91,49 @@ export default function ({
       }
       navigate({ to: "/order-success", search: { id: res.orderId } });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Checkout failed");
+      toast.error(err instanceof Error ? err.message : "Checkout failed. Please try again.");
     } finally {
       setSubmitting(null);
     }
   };
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    pay("stripe");
-  };
-
-
   const input =
-    "w-full bg-white border border-burgundy/15 px-4 py-3 text-sm font-sans text-charcoal focus:outline-none focus:border-gold transition";
+    "w-full bg-white border border-burgundy/15 px-4 py-3 text-sm font-sans text-charcoal placeholder:text-warm-gray/60 focus:outline-none focus:border-gold transition";
 
   return (
-    <form onSubmit={submit} className="space-y-4">
-      <h2 className="section-title text-center mb-8">
-        Complete your <em>checkout.</em>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        pay("stripe");
+      }}
+      noValidate
+      className="space-y-4"
+    >
+      <h2 className="font-serif font-light text-2xl text-charcoal mb-6">
+        Your <em>details.</em>
       </h2>
-      <div className="flex gap-3 items-center">
-        <label className="text-xs uppercase tracking-wider text-warm-gray">Quantity</label>
+
+      {/* Quantity + running total */}
+      <div className="flex gap-3 items-center bg-cream px-4 py-3 border border-burgundy/10">
+        <label className="text-xs uppercase tracking-wider text-warm-gray shrink-0">Quantity</label>
         <input
           type="number"
           min={1}
           max={10}
           value={qty}
-          onChange={(e) => setQty(Math.max(1, +e.target.value))}
-          className={`${input} !w-24`}
+          onChange={(e) => setQty(Math.max(1, Math.min(10, +e.target.value)))}
+          className={`${input} !w-20`}
         />
         <div className="ml-auto font-serif text-2xl text-burgundy-deep">
           {formatCents(priceCents * qty, currency)}
         </div>
       </div>
+
+      {/* Personal details */}
       <div className="grid md:grid-cols-2 gap-3">
         <input
           required
-          placeholder="Full name"
+          placeholder="Full name *"
           value={form.customerName}
           onChange={onChange("customerName")}
           className={input}
@@ -125,7 +141,7 @@ export default function ({
         <input
           required
           type="email"
-          placeholder="Email"
+          placeholder="Email *"
           value={form.customerEmail}
           onChange={onChange("customerEmail")}
           className={input}
@@ -137,9 +153,12 @@ export default function ({
         onChange={onChange("phone")}
         className={input}
       />
+
+      {/* Shipping address */}
+      <p className="text-xs uppercase tracking-wider text-warm-gray pt-1">Shipping address</p>
       <input
         required
-        placeholder="Address line 1"
+        placeholder="Address line 1 *"
         value={form.line1}
         onChange={onChange("line1")}
         className={input}
@@ -153,7 +172,7 @@ export default function ({
       <div className="grid md:grid-cols-3 gap-3">
         <input
           required
-          placeholder="City"
+          placeholder="City *"
           value={form.city}
           onChange={onChange("city")}
           className={input}
@@ -166,7 +185,7 @@ export default function ({
         />
         <input
           required
-          placeholder="Postcode"
+          placeholder="Postcode *"
           value={form.postal_code}
           onChange={onChange("postal_code")}
           className={input}
@@ -174,34 +193,40 @@ export default function ({
       </div>
       <input
         required
-        placeholder="Country"
+        placeholder="Country *"
         value={form.country}
         onChange={onChange("country")}
         className={input}
       />
+
+      {/* Notes */}
       <textarea
         placeholder="Anything we should know? (optional)"
         value={form.notes}
         onChange={onChange("notes")}
-        className={`${input} min-h-[80px]`}
+        className={`${input} min-h-[80px] resize-none`}
       />
+
+      {/* Payment buttons */}
       <div className="space-y-3 pt-2">
         <button
           type="submit"
           disabled={submitting !== null}
-          className="btn-primary w-full disabled:opacity-60"
+          className="btn-primary w-full disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {submitting === "stripe" ? "Redirecting to Stripe…" : "Pay with Card (Stripe)"}
         </button>
+
         <button
           type="button"
           onClick={() => pay("paypal")}
           disabled={submitting !== null}
-          className="w-full px-6 py-3 text-sm font-semibold tracking-wide bg-[#ffc439] text-[#003087] hover:bg-[#f5b800] transition disabled:opacity-60"
+          className="w-full px-6 py-3 text-sm font-semibold tracking-wide bg-[#ffc439] text-[#003087] hover:bg-[#f5b800] transition disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {submitting === "paypal" ? "Redirecting to PayPal…" : "Pay with PayPal"}
         </button>
-        <p className="text-[11px] text-warm-gray text-center pt-2">
+
+        <p className="text-[11px] text-warm-gray text-center pt-1">
           Secure checkout — your payment details never touch our servers.
         </p>
       </div>

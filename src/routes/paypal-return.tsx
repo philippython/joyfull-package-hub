@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { z } from "zod";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 import { SiteLayout } from "@/components/site-layout";
 import { capturePayPalOrder } from "@/lib/paypal.functions";
 
@@ -9,54 +9,45 @@ export const Route = createFileRoute("/paypal-return")({
   validateSearch: (s) =>
     z
       .object({
-        id: z.string().min(1),
-        token: z.string().optional(),
-        PayerID: z.string().optional(),
+        id: z.string().uuid(), // our internal order id
+        token: z.string().min(1), // PayPal order token
+        PayerID: z.string().optional(), // PayPal payer id
       })
       .parse(s),
-  head: () => ({ meta: [{ title: "Completing payment — Rewindd" }] }),
+  head: () => ({ meta: [{ title: "Completing your order… — Rewindd" }] }),
   component: PayPalReturn,
 });
 
 function PayPalReturn() {
   const { id, token } = Route.useSearch();
-  const capture = useServerFn(capturePayPalOrder);
   const navigate = useNavigate();
-  const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
-  const [msg, setMsg] = useState<string>("");
+  const capture = useServerFn(capturePayPalOrder);
+  const ran = useRef(false);
 
   useEffect(() => {
-    if (!token) {
-      setStatus("error");
-      setMsg("Missing PayPal token.");
-      return;
-    }
+    if (ran.current) return;
+    ran.current = true;
+
     capture({ data: { orderId: id, token } })
-      .then(() => {
-        setStatus("ok");
-        navigate({ to: "/order-success", search: { id } });
+      .then(({ status }) => {
+        if (status === "COMPLETED") {
+          navigate({ to: "/order-success", search: { id } });
+        } else {
+          // Payment not completed — send back to checkout
+          navigate({ to: "/checkout", search: { slug: "" } });
+        }
       })
-      .catch((e: any) => {
-        setStatus("error");
-        setMsg(e?.message || "Capture failed");
+      .catch(() => {
+        navigate({ to: "/checkout", search: { slug: "" } });
       });
-  }, [id, token, capture, navigate]);
+  }, []);
 
   return (
     <SiteLayout>
-      <section className="min-h-[60vh] bg-cream flex items-center justify-center px-6 pt-32 pb-24">
-        <div className="max-w-md text-center">
-          {status === "loading" && (
-            <p className="text-warm-gray">Confirming your PayPal payment…</p>
-          )}
-          {status === "error" && (
-            <>
-              <h1 className="section-title">Payment <em>could not be completed.</em></h1>
-              <p className="mt-4 text-warm-gray">{msg}</p>
-            </>
-          )}
-        </div>
-      </section>
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 text-warm-gray">
+        <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm">Completing your order…</p>
+      </div>
     </SiteLayout>
   );
 }

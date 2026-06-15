@@ -22,6 +22,8 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
+// ─── Auth gate ───────────────────────────────────────────────────────────────
+
 function AdminPage() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
@@ -38,13 +40,13 @@ function AdminPage() {
     });
   }, [navigate]);
 
-  if (!ready || !authed) {
+  if (!ready || !authed)
     return (
       <SiteLayout>
         <div className="min-h-[60vh] pt-32 px-6 text-center text-warm-gray">Loading…</div>
       </SiteLayout>
     );
-  }
+
   return <AdminInner />;
 }
 
@@ -53,6 +55,8 @@ function AdminInner() {
   const { data: roleData, isLoading } = useQuery({
     queryKey: ["isAdmin"],
     queryFn: () => checkAdmin(),
+    staleTime: 30_000,
+    retry: false,
   });
 
   const signOut = async () => {
@@ -115,6 +119,8 @@ function AdminInner() {
   );
 }
 
+// ─── Claim admin ─────────────────────────────────────────────────────────────
+
 function ClaimAdminButton() {
   const claim = useServerFn(claimAdmin);
   const qc = useQueryClient();
@@ -124,7 +130,9 @@ function ClaimAdminButton() {
         try {
           await claim();
           toast.success("You are now admin");
-          qc.invalidateQueries();
+          await qc.invalidateQueries({ queryKey: ["isAdmin"] });
+          await qc.invalidateQueries({ queryKey: ["adminProducts"] });
+          await qc.invalidateQueries({ queryKey: ["adminOrders"] });
         } catch (e) {
           toast.error(e instanceof Error ? e.message : "Failed");
         }
@@ -135,6 +143,8 @@ function ClaimAdminButton() {
     </button>
   );
 }
+
+// ─── My Orders (non-admin view) ───────────────────────────────────────────────
 
 function MyOrders() {
   const fn = useServerFn(getMyOrders);
@@ -168,13 +178,33 @@ function MyOrders() {
   );
 }
 
+// ─── Products Manager ─────────────────────────────────────────────────────────
+
 function ProductsManager() {
   const list = useServerFn(adminListProducts);
   const upsert = useServerFn(upsertProduct);
   const del = useServerFn(deleteProduct);
   const qc = useQueryClient();
-  const { data: products } = useQuery({ queryKey: ["adminProducts"], queryFn: () => list() });
+  const { data: products } = useQuery({
+    queryKey: ["adminProducts"],
+    queryFn: () => list(),
+    staleTime: 10_000,
+  });
   const [editing, setEditing] = useState<any | null>(null);
+
+  const blankProduct = {
+    name: "",
+    slug: "",
+    tagline: "",
+    description: "",
+    price_cents: 0,
+    currency: "gbp",
+    items_included: [],
+    image_urls: [],
+    image_url: "",
+    is_active: true,
+    sort_order: 0,
+  };
 
   const save = async (p: any) => {
     try {
@@ -191,42 +221,39 @@ function ProductsManager() {
   return (
     <section className="mb-16">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="font-serif text-2xl text-burgundy-deep">Packages</h2>
-        <button
-          onClick={() =>
-            setEditing({
-              name: "",
-              slug: "",
-              description: "",
-              price_cents: 0,
-              currency: "usd",
-              items_included: [],
-              image_urls: [],
-              is_active: true,
-              sort_order: 0,
-            })
-          }
-          className="btn-primary !py-2"
-        >
-          + New Package
+        <h2 className="font-serif text-2xl text-burgundy-deep">Products</h2>
+        <button onClick={() => setEditing(blankProduct)} className="btn-primary !py-2">
+          + New Product
         </button>
       </div>
+
       <div className="space-y-2">
         {products?.map((p: any) => (
           <div
             key={p.id}
             className="bg-white p-5 flex justify-between items-center border-l-2 border-gold"
           >
-            <div>
-              <div className="font-serif text-lg text-burgundy-deep">
-                {p.name}{" "}
-                {!p.is_active && <span className="text-xs text-warm-gray">(inactive)</span>}
-              </div>
-              <div className="text-xs text-warm-gray">
-                {p.slug} · {formatCents(p.price_cents, p.currency)}
+            <div className="flex gap-4 items-center min-w-0">
+              {/* Thumbnail */}
+              {(p.image_urls?.[0] || p.image_url) && (
+                <img
+                  src={p.image_urls?.[0] || p.image_url}
+                  alt={p.name}
+                  className="w-12 h-12 object-cover shrink-0 border border-burgundy/10"
+                />
+              )}
+              <div className="min-w-0">
+                <div className="font-serif text-lg text-burgundy-deep truncate">
+                  {p.name}{" "}
+                  {!p.is_active && <span className="text-xs text-warm-gray">(inactive)</span>}
+                </div>
+                <div className="text-xs text-warm-gray truncate">
+                  {p.slug} · {formatCents(p.price_cents, p.currency)} ·{" "}
+                  {(p.items_included ?? []).length} items
+                </div>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-3 shrink-0 ml-4">
               <button
                 onClick={() => setEditing(p)}
                 className="text-xs uppercase tracking-widest text-burgundy hover:text-burgundy-deep"
@@ -235,12 +262,14 @@ function ProductsManager() {
               </button>
               <button
                 onClick={async () => {
-                  if (confirm("Delete this package?")) {
+                  if (confirm(`Delete "${p.name}"? This cannot be undone.`)) {
                     await del({ data: { id: p.id } });
-                    qc.invalidateQueries();
+                    toast.success("Deleted");
+                    await qc.invalidateQueries({ queryKey: ["adminProducts"] });
+                    await qc.invalidateQueries({ queryKey: ["products"] });
                   }
                 }}
-                className="text-xs uppercase tracking-widest text-warm-gray hover:text-destructive"
+                className="text-xs uppercase tracking-widest text-warm-gray hover:text-red-600"
               >
                 Delete
               </button>
@@ -248,12 +277,15 @@ function ProductsManager() {
           </div>
         ))}
       </div>
+
       {editing && (
         <ProductEditor product={editing} onCancel={() => setEditing(null)} onSave={save} />
       )}
     </section>
   );
 }
+
+// ─── Product Editor Modal ─────────────────────────────────────────────────────
 
 function ProductEditor({
   product,
@@ -272,27 +304,38 @@ function ProductEditor({
       : product.image_url
         ? String(product.image_url).trim()
         : "",
-    price_dollars: (product.price_cents ?? 0) / 100,
+    price_pounds: ((product.price_cents ?? 0) / 100).toFixed(2),
   });
+
+  // derive image preview list from textarea
+  const previewImages = String(p.image_urls_text)
+    .split("\n")
+    .map((s: string) => s.trim())
+    .filter(Boolean)
+    .slice(0, 10);
+
   const input =
-    "w-full bg-white border border-burgundy/15 px-4 py-2 text-sm focus:outline-none focus:border-gold";
+    "w-full bg-white border border-burgundy/15 px-4 py-2.5 text-sm focus:outline-none focus:border-gold transition";
+  const label = "block text-xs uppercase tracking-wider text-warm-gray mb-1";
+
+  const field = (labelText: string, children: React.ReactNode) => (
+    <div>
+      <label className={label}>{labelText}</label>
+      {children}
+    </div>
+  );
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const image_urls = String(p.image_urls_text)
-      .split("\n")
-      .map((s: string) => s.trim())
-      .filter(Boolean)
-      .slice(0, 10);
-
+    const image_urls = previewImages;
     onSave({
       id: p.id,
-      name: p.name,
-      slug: p.slug,
-      tagline: p.tagline ?? "",
-      description: p.description,
-      price_cents: Math.round(Number(p.price_dollars) * 100),
-      currency: p.currency || "usd",
+      name: p.name.trim(),
+      slug: p.slug.trim().toLowerCase().replace(/\s+/g, "-"),
+      tagline: p.tagline?.trim() ?? "",
+      description: p.description.trim(),
+      price_cents: Math.round(Number(p.price_pounds) * 100),
+      currency: (p.currency || "gbp").trim().toLowerCase(),
       image_url: image_urls[0] ?? "",
       image_urls,
       items_included: String(p.items_included_text)
@@ -305,86 +348,166 @@ function ProductEditor({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <form
-        onSubmit={submit}
-        className="bg-cream max-w-2xl w-full p-8 space-y-3 max-h-[90vh] overflow-y-auto"
-      >
-        <h3 className="font-serif text-2xl text-burgundy-deep">{p.id ? "Edit" : "New"} Package</h3>
-        <input
-          required
-          placeholder="Name"
-          value={p.name}
-          onChange={(e) => setP({ ...p, name: e.target.value })}
-          className={input}
-        />
-        <input
-          required
-          placeholder="Slug (lowercase-with-dashes)"
-          value={p.slug}
-          onChange={(e) => setP({ ...p, slug: e.target.value })}
-          className={input}
-        />
-        <input
-          placeholder="Tagline"
-          value={p.tagline ?? ""}
-          onChange={(e) => setP({ ...p, tagline: e.target.value })}
-          className={input}
-        />
-        <textarea
-          required
-          placeholder="Description"
-          value={p.description}
-          onChange={(e) => setP({ ...p, description: e.target.value })}
-          className={`${input} min-h-[100px]`}
-        />
-        <div className="grid grid-cols-3 gap-3">
-          <input
-            required
-            type="number"
-            step="0.01"
-            placeholder="Price"
-            value={p.price_dollars}
-            onChange={(e) => setP({ ...p, price_dollars: e.target.value })}
-            className={input}
-          />
-          <input
-            placeholder="Currency"
-            value={p.currency}
-            onChange={(e) => setP({ ...p, currency: e.target.value })}
-            className={input}
-          />
-          <input
-            type="number"
-            placeholder="Sort"
-            value={p.sort_order}
-            onChange={(e) => setP({ ...p, sort_order: e.target.value })}
-            className={input}
-          />
+    <div className="fixed inset-0 bg-black/60 z-50 flex items-start justify-center p-4 overflow-y-auto">
+      <form onSubmit={submit} className="bg-cream max-w-3xl w-full p-8 space-y-5 my-8">
+        <div className="flex justify-between items-center">
+          <h3 className="font-serif text-2xl text-burgundy-deep">
+            {p.id ? "Edit Product" : "New Product"}
+          </h3>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-warm-gray hover:text-charcoal text-xl leading-none"
+          >
+            ✕
+          </button>
         </div>
-        <textarea
-          placeholder="Image URLs (one per line, max 10)"
-          value={p.image_urls_text}
-          onChange={(e) => setP({ ...p, image_urls_text: e.target.value })}
-          className={`${input} min-h-[100px]`}
-        />
-        <textarea
-          placeholder="Items included (one per line)"
-          value={p.items_included_text}
-          onChange={(e) => setP({ ...p, items_included_text: e.target.value })}
-          className={`${input} min-h-[120px]`}
-        />
-        <label className="flex items-center gap-2 text-sm">
+
+        {/* Basic info */}
+        <div className="grid md:grid-cols-2 gap-4">
+          {field(
+            "Product Name *",
+            <input
+              required
+              placeholder="e.g. Date Night Box for Couples UK"
+              value={p.name}
+              onChange={(e) => setP({ ...p, name: e.target.value })}
+              className={input}
+            />,
+          )}
+          {field(
+            "URL Slug *",
+            <input
+              required
+              placeholder="e.g. rewindd-ritual-kit"
+              value={p.slug}
+              onChange={(e) =>
+                setP({ ...p, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })
+              }
+              className={input}
+            />,
+          )}
+        </div>
+
+        {field(
+          "Tagline (shown under product name)",
+          <input
+            placeholder="e.g. A romantic at-home experience designed to help busy couples reconnect."
+            value={p.tagline ?? ""}
+            onChange={(e) => setP({ ...p, tagline: e.target.value })}
+            className={input}
+          />,
+        )}
+
+        {field(
+          `Description * (${(p.description ?? "").length} chars) — use blank lines between paragraphs`,
+          <textarea
+            required
+            placeholder={
+              "Still love each other, but struggling to find time for each other?\n\nYou're not alone.\n\nRewindd is a date night box..."
+            }
+            value={p.description}
+            onChange={(e) => setP({ ...p, description: e.target.value })}
+            className={`${input} min-h-[180px] font-mono text-xs`}
+          />,
+        )}
+
+        {/* Price + currency + sort */}
+        <div className="grid grid-cols-3 gap-4">
+          {field(
+            "Price (£) *",
+            <input
+              required
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="40.00"
+              value={p.price_pounds}
+              onChange={(e) => setP({ ...p, price_pounds: e.target.value })}
+              className={input}
+            />,
+          )}
+          {field(
+            "Currency",
+            <input
+              placeholder="gbp"
+              value={p.currency}
+              onChange={(e) => setP({ ...p, currency: e.target.value })}
+              className={input}
+            />,
+          )}
+          {field(
+            "Sort Order",
+            <input
+              type="number"
+              value={p.sort_order}
+              onChange={(e) => setP({ ...p, sort_order: e.target.value })}
+              className={input}
+            />,
+          )}
+        </div>
+
+        {/* Image URLs */}
+        {field(
+          "Image URLs — one per line, max 10 (first image is the main one)",
+          <textarea
+            placeholder={"https://example.com/photo1.jpg\nhttps://example.com/photo2.jpg"}
+            value={p.image_urls_text}
+            onChange={(e) => setP({ ...p, image_urls_text: e.target.value })}
+            className={`${input} min-h-[100px] font-mono text-xs`}
+          />,
+        )}
+
+        {/* Live image preview */}
+        {previewImages.length > 0 && (
+          <div>
+            <p className={label}>Image Preview</p>
+            <div className="flex gap-2 flex-wrap">
+              {previewImages.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`preview ${i + 1}`}
+                  className="w-16 h-16 object-cover border border-burgundy/15"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.opacity = "0.3";
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Items included */}
+        {field(
+          `What's included — one item per line (${String(p.items_included_text).split("\n").filter(Boolean).length} items)`,
+          <textarea
+            placeholder={
+              "30 conversation cards designed to spark meaningful connection\nVanilla candle to help you slow down\nCurated Spotify playlist\nMassage oil\nSatin eye mask\nDate Night Ritual Guide\nPremium gift box"
+            }
+            value={p.items_included_text}
+            onChange={(e) => setP({ ...p, items_included_text: e.target.value })}
+            className={`${input} min-h-[160px]`}
+          />,
+        )}
+
+        {/* Active toggle */}
+        <label className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"
             checked={p.is_active}
             onChange={(e) => setP({ ...p, is_active: e.target.checked })}
-          />{" "}
-          Active (visible to customers)
+            className="w-4 h-4 accent-gold"
+          />
+          <span className="text-sm text-charcoal">
+            Active — visible to customers on the kit listing page
+          </span>
         </label>
-        <div className="flex gap-3 pt-2">
+
+        {/* Actions */}
+        <div className="flex gap-3 pt-2 border-t border-burgundy/10">
           <button type="submit" className="btn-primary">
-            Save
+            Save Product
           </button>
           <button
             type="button"
@@ -399,31 +522,42 @@ function ProductEditor({
   );
 }
 
+// ─── Orders Manager ───────────────────────────────────────────────────────────
+
 const STATUSES = ["pending", "paid", "shipped", "delivered", "cancelled"] as const;
 
 function OrdersManager() {
   const list = useServerFn(adminListOrders);
   const setStatus = useServerFn(updateOrderStatus);
   const qc = useQueryClient();
-  const { data: orders } = useQuery({ queryKey: ["adminOrders"], queryFn: () => list() });
+  const { data: orders } = useQuery({
+    queryKey: ["adminOrders"],
+    queryFn: () => list(),
+    staleTime: 10_000,
+  });
 
   return (
     <section>
-      <h2 className="font-serif text-2xl text-burgundy-deep mb-6">Orders</h2>
+      <h2 className="font-serif text-2xl text-burgundy-deep mb-6">
+        Orders{" "}
+        {orders?.length ? (
+          <span className="text-base font-sans text-warm-gray ml-2">({orders.length})</span>
+        ) : null}
+      </h2>
       <div className="space-y-2">
-        {orders?.length === 0 && <p className="text-warm-gray text-sm">No orders yet.</p>}
+        {!orders?.length && <p className="text-warm-gray text-sm">No orders yet.</p>}
         {orders?.map((o: any) => (
-          <details key={o.id} className="bg-white border-l-2 border-gold">
-            <summary className="p-5 cursor-pointer flex justify-between items-center">
-              <div>
-                <div className="font-serif text-lg text-burgundy-deep">
+          <details key={o.id} className="bg-white border-l-2 border-gold group">
+            <summary className="p-5 cursor-pointer flex justify-between items-center list-none">
+              <div className="min-w-0">
+                <div className="font-serif text-lg text-burgundy-deep truncate">
                   {o.customer_name} · {o.products?.name}
                 </div>
                 <div className="text-xs text-warm-gray">
-                  {new Date(o.created_at).toLocaleString()} · {o.customer_email}
+                  {new Date(o.created_at).toLocaleString("en-GB")} · {o.customer_email}
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 shrink-0 ml-4">
                 <span className="font-serif text-lg">
                   {formatCents(o.amount_cents, o.currency)}
                 </span>
@@ -432,10 +566,10 @@ function OrdersManager() {
                   onClick={(e) => e.stopPropagation()}
                   onChange={async (e) => {
                     await setStatus({ data: { id: o.id, status: e.target.value as any } });
-                    toast.success("Updated");
+                    toast.success("Status updated");
                     qc.invalidateQueries({ queryKey: ["adminOrders"] });
                   }}
-                  className="text-[11px] uppercase tracking-widest border border-burgundy/20 px-2 py-1 bg-white"
+                  className="text-[11px] uppercase tracking-widest border border-burgundy/20 px-2 py-1 bg-white focus:outline-none focus:border-gold"
                 >
                   {STATUSES.map((s) => (
                     <option key={s} value={s}>
@@ -445,13 +579,46 @@ function OrdersManager() {
                 </select>
               </div>
             </summary>
-            <div className="px-5 pb-5 text-sm text-warm-gray">
-              <div className="font-medium text-charcoal mb-1">Shipping</div>
-              <pre className="text-xs whitespace-pre-wrap bg-cream p-3 border border-burgundy/10">
-                {JSON.stringify(o.shipping_address, null, 2)}
-              </pre>
-              <div className="mt-2">
-                Qty: {o.quantity} · Order ID: <span className="font-mono">{o.id}</span>
+            <div className="px-5 pb-5 text-sm text-warm-gray border-t border-burgundy/5">
+              <div className="grid md:grid-cols-2 gap-4 mt-4">
+                <div>
+                  <div className="font-medium text-charcoal mb-2 text-xs uppercase tracking-wider">
+                    Shipping Address
+                  </div>
+                  <pre className="text-xs whitespace-pre-wrap bg-cream p-3 border border-burgundy/10 leading-relaxed">
+                    {JSON.stringify(o.shipping_address, null, 2)}
+                  </pre>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="font-medium text-charcoal text-xs uppercase tracking-wider mb-2">
+                    Order Details
+                  </div>
+                  <p>
+                    <span className="text-charcoal">Order ID:</span>{" "}
+                    <span className="font-mono">{o.id}</span>
+                  </p>
+                  <p>
+                    <span className="text-charcoal">Quantity:</span> {o.quantity}
+                  </p>
+                  <p>
+                    <span className="text-charcoal">Amount:</span>{" "}
+                    {formatCents(o.amount_cents, o.currency)}
+                  </p>
+                  <p>
+                    <span className="text-charcoal">Status:</span>{" "}
+                    <span className="uppercase text-gold">{o.status}</span>
+                  </p>
+                  {o.stripe_session_id && (
+                    <p>
+                      <span className="text-charcoal">Payment ref:</span>{" "}
+                      <span className="font-mono break-all">{o.stripe_session_id}</span>
+                    </p>
+                  )}
+                  <p>
+                    <span className="text-charcoal">Placed:</span>{" "}
+                    {new Date(o.created_at).toLocaleString("en-GB")}
+                  </p>
+                </div>
               </div>
             </div>
           </details>

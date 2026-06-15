@@ -2,14 +2,19 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site-layout";
 import coupleKitchen from "@/assets/our-story-couple.jpeg";
 
-
 export const Route = createFileRoute("/our-story")({
   head: () => ({
     meta: [
       { title: "Our Story — Rewindd" },
-      { name: "description", content: "The love was still there. Life just got busy. Why we built Rewindd." },
+      {
+        name: "description",
+        content: "The love was still there. Life just got busy. Why we built Rewindd.",
+      },
       { property: "og:title", content: "Rewindd — Our Story" },
-      { property: "og:description", content: "Nothing was wrong. Something was missing. Here is why we built Rewindd." },
+      {
+        property: "og:description",
+        content: "Nothing was wrong. Something was missing. Here is why we built Rewindd.",
+      },
     ],
   }),
   component: OurStory,
@@ -36,7 +41,9 @@ function OurStory() {
       <section className="bg-charcoal text-cream pt-28 pb-12 md:pt-36 md:pb-20 px-6 text-center">
         <div className="eyebrow justify-center !text-[color:var(--color-gold)] mb-4">Our Story</div>
         <h1 className="font-serif font-light text-[clamp(32px,6vw,64px)] leading-[1.1] max-w-3xl mx-auto">
-          The love was still there.<br/><em>Life just got busy.</em>
+          The love was still there.
+          <br />
+          <em>Life just got busy.</em>
         </h1>
       </section>
 
@@ -45,16 +52,32 @@ function OurStory() {
           {/* Story first, image after — better on mobile */}
           <div className="space-y-5 text-warm-gray leading-relaxed text-[15px] md:text-base">
             {paragraphs.map((p, i) => (
-              <p key={i} className={i === 4 || i === 8 ? "font-serif italic text-lg md:text-xl text-burgundy leading-snug" : ""}>{p}</p>
+              <p
+                key={i}
+                className={
+                  i === 4 || i === 8
+                    ? "font-serif italic text-lg md:text-xl text-burgundy leading-snug"
+                    : ""
+                }
+              >
+                {p}
+              </p>
             ))}
           </div>
 
           <div className="mt-12 max-w-md mx-auto">
-            <img src={coupleKitchen} alt="A couple sharing a quiet morning together" loading="lazy" className="w-full aspect-[3/4] object-cover" />
+            <img
+              src={coupleKitchen}
+              alt="A couple sharing a quiet morning together"
+              loading="lazy"
+              className="w-full aspect-[3/4] object-cover"
+            />
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/kit" className="btn-primary">Get Your Date Night Kit — £40</Link>
+            <Link to="/kit" className="btn-primary">
+              Get Your Date Night Kit — £39.99
+            </Link>
           </div>
         </div>
       </section>

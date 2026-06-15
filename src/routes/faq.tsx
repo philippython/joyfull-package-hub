@@ -84,7 +84,7 @@ function FaqPage() {
           ))}
           <div className="text-center mt-14">
             <Link to="/kit" className="btn-primary">
-              Get Your Date Night Kit — £40
+              Get Your Date Night Kit — £39.99
             </Link>
           </div>
         </div>
