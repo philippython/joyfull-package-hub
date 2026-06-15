@@ -8,19 +8,19 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as PoliciesRouteImport } from './routes/policies'
-import { Route as PaypalReturnRouteImport } from './routes/paypal-return'
-import { Route as OurStoryRouteImport } from './routes/our-story'
-import { Route as OrderSuccessRouteImport } from './routes/order-success'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as KitRouteImport } from './routes/kit'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as AdminRouteImport } from './routes/admin'
+import { Route as rootRouteImport } from './routes/__root.tsx'
+import { Route as PoliciesRouteImport } from './routes/policies.tsx'
+import { Route as PaypalReturnRouteImport } from './routes/paypal-return.tsx'
+import { Route as OurStoryRouteImport } from './routes/our-story.tsx'
+import { Route as OrderSuccessRouteImport } from './routes/order-success.tsx'
+import { Route as LoginRouteImport } from './routes/login.tsx'
+import { Route as KitRouteImport } from './routes/kit.tsx'
+import { Route as FaqRouteImport } from './routes/faq.tsx'
+import { Route as ContactRouteImport } from './routes/contact.tsx'
+import { Route as CheckoutRouteImport } from './routes/checkout.tsx'
+import { Route as AdminRouteImport } from './routes/admin.tsx'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as KitSlugRouteImport } from './routes/kit.$slug'
+import { Route as KitSlugRouteImport } from './routes/kit.$slug.tsx'
 
 const PoliciesRoute = PoliciesRouteImport.update({
   id: '/policies',

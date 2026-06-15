@@ -1,24 +1,20 @@
-import { defineConfig } from "@tanstack/react-start/config";
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  tsr: {
-    appDirectory: "src",
-    routesDirectory: "src/routes",
-    generatedRouteTree: "src/routeTree.gen.ts",
-    quoteStyle: "double",
-    semicolons: true,
-  },
-  vite: {
-    plugins: [
-      viteTsConfigPaths({
-        projects: ["./tsconfig.json"],
-      }),
-      tailwindcss(),
-    ],
-  },
-  server: {
-    preset: "netlify",
-  },
+  plugins: [
+    viteTsConfigPaths({
+      projects: ["./tsconfig.json"],
+    }),
+    tailwindcss(),
+    tanstackStart({
+      server: {
+        entry: "src/server.ts",
+      },
+    }),
+    react(),
+  ],
 });
