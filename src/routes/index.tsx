@@ -230,32 +230,71 @@ function Home() {
         </div>
       </section>
 
-      {/* QUOTE PHOTO — fixed */}
-      <section className="relative h-[70vh] min-h-[480px] overflow-hidden">
-        {/* Image fills the entire section, cropped from centre */}
+      {/* QUOTE PHOTO */}
+      <section
+        className="relative w-full overflow-hidden"
+        style={{ height: "clamp(420px, 70vh, 760px)" }}
+      >
         <img
           src={coupleCards}
           alt="A couple drawing cards together by candlelight"
           loading="lazy"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center 20%",
+            display: "block",
+          }}
         />
-        {/* Dark gradient heavier at bottom so text is always readable */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
-        {/* Quote pinned to bottom centre */}
-        <div className="absolute bottom-0 left-0 right-0 px-6 pb-14 text-center">
-          <p className="font-serif italic text-2xl md:text-4xl lg:text-5xl text-cream leading-snug max-w-2xl mx-auto drop-shadow-md">
+        {/* Vignette — dark at edges, lighter in middle */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.85) 100%)",
+          }}
+        />
+        {/* Quote + CTA — stacked at bottom of image */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: "8%",
+            left: 0,
+            right: 0,
+            textAlign: "center",
+            padding: "0 1.5rem",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "1.5rem",
+          }}
+        >
+          <p
+            className="font-serif"
+            style={{
+              fontStyle: "italic",
+              fontSize: "clamp(1.4rem, 3.5vw, 3rem)",
+              color: "#fff",
+              lineHeight: 1.3,
+              maxWidth: "36rem",
+              margin: 0,
+              textShadow: "0 2px 24px rgba(0,0,0,0.6)",
+              letterSpacing: "0.01em",
+            }}
+          >
             "One evening. No distractions. Just us."
           </p>
-        </div>
-      </section>
-
-      {/* CTA AFTER QUOTE PHOTO */}
-      <section className="bg-black py-12">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <Link to="/kit" className="btn-primary px-8 py-3 text-[13px] tracking-[0.22em]">
-            Get your Kit — Now
+          <Link
+            to="/kit"
+            className="btn-primary"
+            style={{ fontSize: "0.7rem", letterSpacing: "0.2em" }}
+          >
+            GET YOUR KIT — £39.99
           </Link>
-          <div className="hero-price mt-4 text-cream">£39.99</div>
         </div>
       </section>
 

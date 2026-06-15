@@ -371,22 +371,52 @@ function ProductEditor({
               required
               placeholder="e.g. Date Night Box for Couples UK"
               value={p.name}
-              onChange={(e) => setP({ ...p, name: e.target.value })}
+              onChange={(e) => {
+                const name = e.target.value;
+                // Auto-generate slug from name, but only if slug hasn't been manually edited
+                const autoSlug = name
+                  .toLowerCase()
+                  .replace(/[^a-z0-9\s-]/g, "")
+                  .trim()
+                  .replace(/\s+/g, "-")
+                  .replace(/-+/g, "-")
+                  .slice(0, 80);
+                setP((prev: any) => ({
+                  ...prev,
+                  name,
+                  slug: prev._slugManuallyEdited ? prev.slug : autoSlug,
+                }));
+              }}
               className={input}
             />,
           )}
-          {field(
-            "URL Slug *",
+          <div>
+            <label className={label}>
+              URL Slug *{" "}
+              <span className="normal-case text-warm-gray/60 ml-1">(auto-generated)</span>
+            </label>
             <input
               required
               placeholder="e.g. rewindd-ritual-kit"
               value={p.slug}
               onChange={(e) =>
-                setP({ ...p, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") })
+                setP((prev: any) => ({
+                  ...prev,
+                  slug: e.target.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9-]/g, "-")
+                    .replace(/-+/g, "-"),
+                  _slugManuallyEdited: true,
+                }))
               }
               className={input}
-            />,
-          )}
+            />
+            {!p._slugManuallyEdited && p.slug && (
+              <p className="text-[11px] text-warm-gray mt-1">
+                Auto-generated from name. Edit above to override.
+              </p>
+            )}
+          </div>
         </div>
 
         {field(
