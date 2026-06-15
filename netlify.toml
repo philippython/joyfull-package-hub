@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build && npx esbuild dist/server/server.js --bundle --platform=node --format=esm --outfile=netlify/functions/server-bundle.js --external:node:* --external:react --external:react-dom"
+  command = "npm run build && node_modules/vite/node_modules/esbuild/bin/esbuild dist/server/server.js --bundle --platform=node --format=esm --outfile=netlify/functions/server-bundle.js --external:node:* --external:react --external:react-dom"
   publish = "dist/client"
 
 [build.environment]
