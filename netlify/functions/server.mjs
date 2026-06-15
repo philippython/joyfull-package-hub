@@ -1,4 +1,4 @@
-import handler from "../../dist/server/server.js";
+import handler from "./server-bundle.js";
 
 export default async (req, context) => {
   return handler.fetch(req, process.env, context);

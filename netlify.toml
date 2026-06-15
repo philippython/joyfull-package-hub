@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build && cp -r node_modules dist/server/node_modules"
+  command = "npm run build && npx esbuild dist/server/server.js --bundle --platform=node --format=esm --outfile=netlify/functions/server-bundle.js --external:node:* --external:react --external:react-dom"
   publish = "dist/client"
 
 [build.environment]
@@ -7,7 +7,6 @@
 
 [functions]
   directory = "netlify/functions"
-  included_files = ["dist/server/**"]
   node_bundler = "none"
 
 [[redirects]]
