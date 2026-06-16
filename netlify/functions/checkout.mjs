@@ -1,18 +1,19 @@
 import { createClient } from "@supabase/supabase-js";
+import ws from "ws";
 
 function adminClient() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false },
-    realtime: { params: { eventsPerSecond: -1 } },
+    auth: { persistSession: false, autoRefreshToken: false },
+    realtime: { transport: ws, params: { eventsPerSecond: -1 } },
   });
 }
 
 export default async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
-
   try {
     const data = await req.json();
     const admin = adminClient();
+    admin.realtime.disconnect();
 
     const { data: product, error: pErr } = await admin
       .from("products")
@@ -97,5 +98,3 @@ export default async (req) => {
     return new Response(JSON.stringify({ error: e.message }), { status: 500 });
   }
 };
-
-export const config = { path: "/.netlify/functions/checkout" };
