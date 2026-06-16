@@ -1,21 +1,18 @@
-import { createClient } from "@supabase/supabase-js";
-import ws from "ws";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-function adminClient() {
-  return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    realtime: { transport: ws, params: { eventsPerSecond: -1 } },
-  });
-}
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
 function paypalBase() {
-  return (process.env.PAYPAL_BASE_URL || "https://api-m.paypal.com").replace(/\/$/, "");
+  return (Deno.env.get("PAYPAL_BASE_URL") || "https://api-m.paypal.com").replace(/\/$/, "");
 }
 
 async function paypalAccessToken() {
-  const id = process.env.PAYPAL_CLIENT_ID;
-  const secret = process.env.PAYPAL_CLIENT_SECRET;
-  const auth = Buffer.from(`${id}:${secret}`).toString("base64");
+  const id = Deno.env.get("PAYPAL_CLIENT_ID")!;
+  const secret = Deno.env.get("PAYPAL_CLIENT_SECRET")!;
+  const auth = btoa(`${id}:${secret}`);
   const r = await fetch(`${paypalBase()}/v1/oauth2/token`, {
     method: "POST",
     headers: {
@@ -29,10 +26,12 @@ async function paypalAccessToken() {
   return j.access_token;
 }
 
-export default async (req) => {
-  if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
   try {
     const { orderId, token } = await req.json();
+
     const accessToken = await paypalAccessToken();
     const r = await fetch(`${paypalBase()}/v2/checkout/orders/${token}/capture`, {
       method: "POST",
@@ -42,15 +41,26 @@ export default async (req) => {
     if (!r.ok)
       return new Response(JSON.stringify({ error: j.message || "PayPal capture failed" }), {
         status: 500,
+        headers: corsHeaders,
       });
 
     if (j.status === "COMPLETED") {
-      const admin = adminClient();
-      admin.realtime.disconnect();
+      const admin = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+        { auth: { persistSession: false } },
+      );
       await admin.from("orders").update({ status: "paid" }).eq("id", orderId);
     }
-    return new Response(JSON.stringify({ status: j.status ?? "UNKNOWN" }), { status: 200 });
+
+    return new Response(JSON.stringify({ status: j.status ?? "UNKNOWN" }), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: e.message }), {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
-};
+});

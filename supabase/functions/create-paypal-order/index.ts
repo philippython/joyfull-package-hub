@@ -1,22 +1,18 @@
-import { createClient } from "@supabase/supabase-js";
-import ws from "ws";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-function adminClient() {
-  return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    realtime: { transport: ws, params: { eventsPerSecond: -1 } },
-  });
-}
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
 function paypalBase() {
-  return (process.env.PAYPAL_BASE_URL || "https://api-m.paypal.com").replace(/\/$/, "");
+  return (Deno.env.get("PAYPAL_BASE_URL") || "https://api-m.paypal.com").replace(/\/$/, "");
 }
 
 async function paypalAccessToken() {
-  const id = process.env.PAYPAL_CLIENT_ID;
-  const secret = process.env.PAYPAL_CLIENT_SECRET;
-  if (!id || !secret) throw new Error("PayPal is not configured");
-  const auth = Buffer.from(`${id}:${secret}`).toString("base64");
+  const id = Deno.env.get("PAYPAL_CLIENT_ID")!;
+  const secret = Deno.env.get("PAYPAL_CLIENT_SECRET")!;
+  const auth = btoa(`${id}:${secret}`);
   const r = await fetch(`${paypalBase()}/v1/oauth2/token`, {
     method: "POST",
     headers: {
@@ -30,56 +26,68 @@ async function paypalAccessToken() {
   return j.access_token;
 }
 
-export default async (req) => {
-  if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
   try {
-    const data = await req.json();
-    const admin = adminClient();
-    admin.realtime.disconnect();
+    const {
+      productId,
+      quantity,
+      customerName,
+      customerEmail,
+      phone,
+      shippingAddress,
+      notes,
+      origin,
+    } = await req.json();
+
+    const admin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      { auth: { persistSession: false } },
+    );
 
     const { data: product, error: pErr } = await admin
       .from("products")
       .select("id, name, price_cents, currency, is_active")
-      .eq("id", data.productId)
+      .eq("id", productId)
       .single();
     if (pErr || !product)
-      return new Response(JSON.stringify({ error: "Product not found" }), { status: 404 });
+      return new Response(JSON.stringify({ error: "Product not found" }), {
+        status: 404,
+        headers: corsHeaders,
+      });
     if (!product.is_active)
-      return new Response(JSON.stringify({ error: "Product unavailable" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "Product unavailable" }), {
+        status: 400,
+        headers: corsHeaders,
+      });
 
-    const amount = product.price_cents * (data.quantity ?? 1);
+    const amount = product.price_cents * (quantity ?? 1);
+
     const { data: order, error: oErr } = await admin
       .from("orders")
       .insert({
         product_id: product.id,
-        customer_email: data.customerEmail,
-        customer_name: data.customerName,
+        customer_email: customerEmail,
+        customer_name: customerName,
         amount_cents: amount,
         currency: product.currency,
-        quantity: data.quantity ?? 1,
+        quantity: quantity ?? 1,
         status: "pending",
-        shipping_address: {
-          ...data.shippingAddress,
-          phone: data.phone,
-          notes: data.notes,
-          provider: "paypal",
-        },
+        shipping_address: { ...shippingAddress, phone, notes, provider: "paypal" },
       })
       .select("id")
       .single();
-    if (oErr) return new Response(JSON.stringify({ error: oErr.message }), { status: 500 });
-
-    const origin = process.env.PUBLIC_URL || new URL(req.url).origin;
-
-    if (!process.env.PAYPAL_CLIENT_ID || !process.env.PAYPAL_CLIENT_SECRET) {
-      return new Response(
-        JSON.stringify({ url: `${origin}/order-success?id=${order.id}`, orderId: order.id }),
-        { status: 200 },
-      );
-    }
+    if (oErr)
+      return new Response(JSON.stringify({ error: oErr.message }), {
+        status: 500,
+        headers: corsHeaders,
+      });
 
     const token = await paypalAccessToken();
     const valueMajor = (amount / 100).toFixed(2);
+
     const body = {
       intent: "CAPTURE",
       purchase_units: [
@@ -107,20 +115,29 @@ export default async (req) => {
     if (!r.ok || !j.id)
       return new Response(JSON.stringify({ error: j.message || "PayPal order failed" }), {
         status: 500,
+        headers: corsHeaders,
       });
 
-    const approve = j.links?.find((l) => l.rel === "approve")?.href;
+    const approve = j.links?.find((l: any) => l.rel === "approve")?.href;
     if (!approve)
       return new Response(JSON.stringify({ error: "PayPal approval URL missing" }), {
         status: 500,
+        headers: corsHeaders,
       });
 
     await admin
       .from("orders")
       .update({ stripe_session_id: `paypal:${j.id}` })
       .eq("id", order.id);
-    return new Response(JSON.stringify({ url: approve, orderId: order.id }), { status: 200 });
+
+    return new Response(JSON.stringify({ url: approve, orderId: order.id }), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: e.message }), {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
-};
+});
