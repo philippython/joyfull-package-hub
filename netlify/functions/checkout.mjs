@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 function adminClient() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false },
+    realtime: { params: { eventsPerSecond: -1 } },
   });
 }
 
@@ -18,8 +19,10 @@ export default async (req) => {
       .select("id, name, price_cents, currency, image_url, image_urls, is_active")
       .eq("id", data.productId)
       .single();
-    if (pErr || !product) return new Response(JSON.stringify({ error: "Product not found" }), { status: 404 });
-    if (!product.is_active) return new Response(JSON.stringify({ error: "Product unavailable" }), { status: 400 });
+    if (pErr || !product)
+      return new Response(JSON.stringify({ error: "Product not found" }), { status: 404 });
+    if (!product.is_active)
+      return new Response(JSON.stringify({ error: "Product unavailable" }), { status: 400 });
 
     const amount = product.price_cents * (data.quantity ?? 1);
 
@@ -43,10 +46,14 @@ export default async (req) => {
     const key = process.env.STRIPE_SECRET_KEY;
 
     if (!key) {
-      return new Response(JSON.stringify({ url: `${origin}/order-success?id=${order.id}`, orderId: order.id }), { status: 200 });
+      return new Response(
+        JSON.stringify({ url: `${origin}/order-success?id=${order.id}`, orderId: order.id }),
+        { status: 200 },
+      );
     }
 
-    const firstImage = (Array.isArray(product.image_urls) && product.image_urls[0]) || product.image_url || null;
+    const firstImage =
+      (Array.isArray(product.image_urls) && product.image_urls[0]) || product.image_url || null;
     const params = new URLSearchParams();
     params.set("mode", "payment");
     params.set("payment_method_types[0]", "card");
@@ -58,22 +65,33 @@ export default async (req) => {
       params.set("line_items[0][price_data][product_data][images][0]", firstImage);
     }
     params.set("customer_email", data.customerEmail);
-    params.set("success_url", `${origin}/order-success?id=${order.id}&session_id={CHECKOUT_SESSION_ID}`);
+    params.set(
+      "success_url",
+      `${origin}/order-success?id=${order.id}&session_id={CHECKOUT_SESSION_ID}`,
+    );
     params.set("cancel_url", `${origin}/checkout?slug=${product.id}`);
     params.set("metadata[order_id]", order.id);
     params.set("shipping_address_collection[allowed_countries][0]", "GB");
 
     const resp = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/x-www-form-urlencoded" },
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
       body: params.toString(),
     });
     const json = await resp.json();
     if (!resp.ok || !json.url) {
-      return new Response(JSON.stringify({ error: json.error?.message || "Stripe failed" }), { status: 500 });
+      return new Response(JSON.stringify({ error: json.error?.message || "Stripe failed" }), {
+        status: 500,
+      });
     }
 
-    await admin.from("orders").update({ stripe_session_id: json.id ?? null }).eq("id", order.id);
+    await admin
+      .from("orders")
+      .update({ stripe_session_id: json.id ?? null })
+      .eq("id", order.id);
     return new Response(JSON.stringify({ url: json.url, orderId: order.id }), { status: 200 });
   } catch (e) {
     return new Response(JSON.stringify({ error: e.message }), { status: 500 });

@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 function adminClient() {
   return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false },
+    realtime: { params: { eventsPerSecond: -1 } },
   });
 }
 
@@ -16,7 +17,10 @@ async function paypalAccessToken() {
   const auth = Buffer.from(`${id}:${secret}`).toString("base64");
   const r = await fetch(`${paypalBase()}/v1/oauth2/token`, {
     method: "POST",
-    headers: { Authorization: `Basic ${auth}`, "Content-Type": "application/x-www-form-urlencoded" },
+    headers: {
+      Authorization: `Basic ${auth}`,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
     body: "grant_type=client_credentials",
   });
   const j = await r.json();
@@ -34,7 +38,10 @@ export default async (req) => {
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
     });
     const j = await r.json();
-    if (!r.ok) return new Response(JSON.stringify({ error: j.message || "PayPal capture failed" }), { status: 500 });
+    if (!r.ok)
+      return new Response(JSON.stringify({ error: j.message || "PayPal capture failed" }), {
+        status: 500,
+      });
 
     if (j.status === "COMPLETED") {
       const admin = adminClient();
