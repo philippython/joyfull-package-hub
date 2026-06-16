@@ -1,15 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { z } from "zod";
+import { Link, useSearchParams } from "react-router-dom";
 import { SiteLayout } from "@/components/site-layout";
-
-export const Route = createFileRoute("/order-success")({
-  validateSearch: (s) => z.object({ id: z.string().optional() }).parse(s),
-  head: () => ({ meta: [{ title: "Order received — Rewindd" }] }),
-  component: Success,
-});
-
-function Success() {
-  const { id } = Route.useSearch();
+export default function OrderSuccessPage() {
+  const [params] = useSearchParams();
+  const id = params.get("id");
   return (
     <SiteLayout>
       <section className="min-h-[70vh] bg-cream flex items-center justify-center px-6 pt-32 pb-24">
