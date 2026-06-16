@@ -132,6 +132,12 @@ export async function deleteProduct(id: string) {
   return { ok: true };
 }
 
+export async function deleteOrder(id: string) {
+  const { error } = await supabase.from("orders").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+  return { ok: true };
+}
+
 export async function updateOrderStatus(id: string, status: string) {
   const { error } = await supabase.from("orders").update({ status }).eq("id", id);
   if (error) throw new Error(error.message);
